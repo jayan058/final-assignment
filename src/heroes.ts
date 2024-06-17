@@ -1,108 +1,122 @@
-// hero.ts
+// HeroCard.ts
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
 
-import { gridCellHeight, gridCellWidth } from "./game";
+import { gridCellHeight, gridCellWidth,gameSpeed } from "./game";
+
+const card1={
+    x:64*4,
+    y:0,
+    width:64,
+    height:64,
+    image1:'./images/card1.png',
+    frameX : 0,
+    frameY : 0,
+    eachWidth:128,
+    eachHeight: 128,
+    firstFrame:0,
+    lastFrame:21,
+
+}
+
+const card2={
+    x:64*5,
+    y:0,
+    width:64,
+    height:64,
+    image2:'./images/card2.png',
+    frameX : 0,
+    frameY : 0,
+    eachWidth:128,
+    eachHeight: 128,
+    firstFrame:0,
+    lastFrame:11,
 
 
- export let defenders:any=[]
+}
+
+
+const card3={
+    x:64*6,
+    y:0,
+    width:64,
+    height:64,
+    image3:'./images/card3.png',
+    frameX : 0,
+    frameY : 0,
+    eachWidth:128,
+    eachHeight: 128,
+    firstFrame:0,
+    lastFrame:18,
+
+
+}
+
+var image1 = new Image();
+image1.src = card1.image1;
+var image2 = new Image();
+image2.src = card2.image2;
+var image3 = new Image();
+image3.src = card3.image3;
+
+export function chooseHero() {
+    ctx1.strokeRect(card1.x,card1.y,card1.width,card1.height)
+    ctx1.fillStyle='purple'
+    ctx1.fillRect(card1.x,card1.y,card1.width,card1.height)
+    if (gameSpeed % 15 === 0) {
+        if (card1.frameX < card1.lastFrame) {
+            card1.frameX += 1;
+        } else {
+            card1.frameX = card1.firstFrame;
+        }
+    }
+    ctx1.drawImage(image1, card1.eachWidth * card1.frameX, 0, card1.eachWidth, card1.eachHeight, card1.x, card1.y, card1.width, card1.height);
+    ctx1.strokeRect(card2.x,card2.y,card2.width,card2.height)
+    ctx1.fillRect(card2.x,card2.y,card2.width,card2.height);
+    if (gameSpeed % 15 === 0) {
+        if (card2.frameX < card2.lastFrame) {
+            card2.frameX += 1;
+        } else {
+            card2.frameX = card2.firstFrame;
+        }
+    }
+    ctx1.drawImage(image2, card2.eachWidth * card2.frameX, 0, card2.eachWidth, card2.eachHeight, card2.x, card2.y, card2.width, card2.height);
+    ctx1.strokeRect(card3.x,card3.y,card3.width,card3.height)
+    ctx1.fillRect(card3.x,card3.y,card3.width,card3.height);
+    if (gameSpeed % 15 === 0) {
+        if (card3.frameX < card3.lastFrame) {
+            card3.frameX += 1;
+        } else {
+            card3.frameX = card3.firstFrame;
+        }
+    }
+    ctx1.drawImage(image3, card3.eachWidth * card3.frameX, 0, card3.eachWidth, card3.eachHeight, card3.x, card3.y, card3.width, card3.height);
+    
+}
+
+
+
 export let resources=300;
-export let heroCount=0
 
 
 
-// Define the base Hero class
-class Hero {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    isAttacking: boolean;
-    health: number;
-    weapon: any[];
-    intervalOfAttack: number;
-    cost: number;
-
-    constructor(x: number, y: number, health: number, intervalOfAttack: number, cost: number) {
-        this.x = x;
-        this.y = y;
-        this.width = gridCellWidth;
-        this.height = gridCellHeight;
-        this.isAttacking = false;
-        this.health = health;
-        this.weapon = [];
-        this.intervalOfAttack = intervalOfAttack;
-        this.cost = cost;
-    }
-
-    draw() {
-        ctx1.fillStyle = 'red';
-        ctx1.fillRect(this.x, this.y, this.width, this.height);
-        ctx1.fillStyle = 'gold';
-        ctx1.font='20px Arial'
-        ctx1.fillText(this.health.toString(), this.x+15 , this.y+20 ); // 
-        
-    }
-}
+export let drawHeroCardnNow=false
+// Define the base HeroCard class
 
 
 
-canvas1.addEventListener('click',function(event:MouseEvent){
-  heroCount++
-    getDefendersLength()
-    const rect = canvas1.getBoundingClientRect();
-  const mouseX = event.clientX - rect.left;
-  const mouseY = event.clientY - rect.top;
-
-  const gridX = Math.floor(mouseX / gridCellWidth) * gridCellWidth;
-  const gridY = Math.floor(mouseY / gridCellHeight) * gridCellHeight;
-  
-   for(let i=0;i<=defenders.length-1;i++){
-    if(defenders[i].x==gridX && defenders[i].y==gridY){
-        return
-    }
-   }
-
-  if (gridY === 0 || gridY >= canvas1.height - gridCellHeight) {
-    ctx1.clearRect(0, 0, canvas1.width, canvas1.height); 
-   
-    return;
-  }
-
-  let heroCost=100
-  if(heroCost<=resources){
-    defenders.push(new Hero(gridX,gridY,100,20,100))
-    resources=resources-heroCost
-  }
-
-
-  
-  
 
 
 
-})
 
-
-export function getDefendersLength() {
-  
-  
-  
-  return heroCount
-   
-}
-
-
-export function drawDefender(){
-    for(let i=0;i<=defenders.length-1;i++){
-        defenders[i].draw()
-
-    }
-}
-
-
-
-export function addResources(x:number){
+export  function addResources(x:number){
  resources=resources+x
+ const audio = new Audio();
+ audio.src='./sound/resouce-increase.mp3' 
+ audio.play();
+console.log(audio);
+
+
+
 }
 

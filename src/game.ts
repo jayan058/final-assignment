@@ -1,11 +1,11 @@
 
-import { drawDefender } from "./heroes";
-
 import { showResources } from "./utils";
 
 import {  drawMandrake, updateMandrakes } from "./mandrake";
 
-import { drawVillan } from "./villans";
+import { drawVillan, spawnEnemy } from "./villans";
+import { chooseHero } from "./heroes";
+
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
 
@@ -98,10 +98,11 @@ function animate() {
     ctx1.clearRect(0, 0, canvas1.width, canvas1.height); 
     
     drawTheGrid();
-    drawDefender(); 
     showResources();
+   chooseHero()
     gameSpeed++
     drawVillan() 
+    spawnEnemy()
     updateMandrakes()
     requestAnimationFrame(animate);
 }

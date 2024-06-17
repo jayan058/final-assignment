@@ -5,6 +5,8 @@ import { gameSpeed } from './game';
 import { addResources } from "./heroes";
 const mandrakeImage = new Image();
 mandrakeImage.src = './images/mandrake.png';
+const manDrakeDustCloud=new Image();
+manDrakeDustCloud.src='./images/mandrake-dust-cloud.png'
 
 const gridCellWidth = 64;
 const gridCellHeight = 64;
@@ -40,7 +42,7 @@ class Mandrake {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        if (gameSpeed % 3 === 0) {
+        if (gameSpeed % 2 === 0) {
             this.frameX++;
             if (this.frameX >= 18) {
                 this.frameX = 0;
@@ -65,13 +67,13 @@ class Mandrake {
         );
 
         ctx.fillStyle = 'gold';
-        ctx.font = '15px Arial';
+        ctx.font = '10px Arial';
         ctx.fillText(this.gamePoint.toString(), this.x + 25, this.y);
       
     }
 
     isExpired() {
-        return Date.now() - this.creationTime > 8000; // 10 seconds
+        return Date.now() - this.creationTime > 5500; // 10 seconds
     }
 
     isHovered(mouseX: number, mouseY: number,mandrake:any) {
