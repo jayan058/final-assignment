@@ -3,12 +3,12 @@ import { gridCellHeight, gridCellWidth,gameSpeed } from "./game";
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
 
-const ROW_HEIGHT = 64;
+
 const ROW_COUNT = 7;
 
 
 let enemytypes:any=[]
-let enemies:any=[]
+export let enemies:any=[]
 const enemy1=new Image()
 enemy1.src='./images/enemy1.png'
 enemytypes.push(enemy1)
@@ -24,6 +24,28 @@ enemytypes.push(enemy4)
 const enemy5=new Image()
 enemy5.src='./images/enemy5.png'
 enemytypes.push(enemy5)
+
+
+
+// Define constants for the sprite sheet frame counts
+const ZOMBIE_HURT_FRAMES =11; // Assuming 6 frames for hurt animation
+const ZOMBIE_ATTACK_FRAMES = 11; // Assuming 8 frames for attack animation
+const ZOMBIE_DEATH_FRAMES = 11; // Assuming 10 frames for death animation
+const ZOMBIE_EXPLOSION_FRAMES = 11; // Assuming 12 frames for explosion animation
+
+const zombieHurtImage = new Image();
+zombieHurtImage.src = './images/zomievillagerhurt.png';
+
+const zombieAttackImage = new Image();
+zombieAttackImage.src = './images/zomievillagerhurt.png';
+
+const zombieDeathImage = new Image();
+zombieDeathImage.src = './images/zomievillagerhurt.png';
+
+const zombieExplosionImage = new Image();
+zombieExplosionImage.src = './images/zomievillagerhurt.png';
+
+
 
 
 
@@ -55,6 +77,7 @@ class Enemy {
 
 class Blade extends Enemy {
     speed: number;
+    moment:number
     health: number;
     pointsAwarded: number;
     frameX: number;
@@ -72,6 +95,7 @@ class Blade extends Enemy {
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth-30, gridCellHeight-30);
         this.speed = 0.2;
+        this.moment=this.speed;
         this.health = 100;
         this.pointsAwarded = this.health;
         this.frameX = 0;
@@ -187,6 +211,7 @@ class NinjaBlade {
 // Define more enemy types similarly
 class zombieVillager extends Enemy {
     speed: number;
+    moment:number
     health: number;
     pointsAwarded: number;
     frameX: number;
@@ -200,6 +225,7 @@ class zombieVillager extends Enemy {
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
         this.speed = 0.2;
+        this.moment=this.speed
         this.health = 120;
         this.pointsAwarded = this.health;
         this.frameX = 0;
@@ -209,7 +235,11 @@ class zombieVillager extends Enemy {
         this.firstFrame = 1;
         this.lastFrame = 11;
         this.enemytype = enemytypes[1]; // Set the specific image/type for EnemyType2
+      
     }
+
+   
+
 
     enemyMovement() {
       
@@ -228,7 +258,7 @@ class zombieVillager extends Enemy {
 
     draw() {
      
-
+    
       ctx1.fillStyle = 'gold';
         ctx1.font = '10px Arial';
         ctx1.fillText(this.health.toString(), this.x + 25, this.y+10 );
@@ -239,6 +269,7 @@ class zombieVillager extends Enemy {
 
 class Bat extends Enemy {
     speed: number;
+    moment:number
     health: number;
     pointsAwarded: number;
     frameX: number;
@@ -252,6 +283,7 @@ class Bat extends Enemy {
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
         this.speed = 0.2;
+        this.moment=this.speed
         this.health = 100;
         this.pointsAwarded = this.health;
         this.frameX = 0;
@@ -292,6 +324,7 @@ class Bat extends Enemy {
 
 class Raven extends Enemy {
     speed: number;
+    moment:number
     health: number;
     pointsAwarded: number;
     frameX: number;
@@ -305,6 +338,7 @@ class Raven extends Enemy {
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth-30, gridCellHeight - 30); // Adjust width and height if needed
         this.speed = 0.2;
+        this.moment=this.speed
         this.health = 100;
         this.pointsAwarded = this.health;
         this.frameX = 0;
@@ -346,6 +380,7 @@ class Raven extends Enemy {
 
 class Ghost extends Enemy {
     speed: number;
+    moment:number;
     health: number;
     pointsAwarded: number;
     frameX: number;
@@ -361,6 +396,7 @@ class Ghost extends Enemy {
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
         this.speed = 0.2;
+        this.moment=this.speed
         this.health = 120;
         this.pointsAwarded = this.health;
         this.frameX = 0;
@@ -425,7 +461,7 @@ export function spawnEnemy() {
         const enemyTypeIndex = Math.floor(Math.random() * enemyTypeClasses.length);
 
         // Create new enemy instance using the selected class
-        const newEnemy = new enemyTypeClasses[enemyTypeIndex](canvas1.width, rowY+5);
+        const newEnemy = new enemyTypeClasses[enemyTypeIndex](canvas1.width, rowY);
 
         // Push the new enemy into the enemies array
         enemies.push(newEnemy);

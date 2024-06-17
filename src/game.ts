@@ -1,10 +1,10 @@
 
-import { showResources } from "./utils";
+import { checkCollisions, checkCollisionsBetweenHeroes, checkCollisionsBetweenenemies, showResources } from "./utils";
 
 import {  drawMandrake, updateMandrakes } from "./mandrake";
 
 import { drawVillan, spawnEnemy } from "./villans";
-import { chooseHero } from "./heroes";
+import { chooseHero, drawDefenders } from "./heroes";
 
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
@@ -96,14 +96,18 @@ canvas1.addEventListener('mousemove', function(event) {
 function animate() {
    
     ctx1.clearRect(0, 0, canvas1.width, canvas1.height); 
-    
+      chooseHero()
     drawTheGrid();
     showResources();
-   chooseHero()
+ 
+   drawDefenders()
     gameSpeed++
     drawVillan() 
     spawnEnemy()
     updateMandrakes()
+    checkCollisions()
+    checkCollisionsBetweenHeroes()
+    checkCollisionsBetweenenemies()
     requestAnimationFrame(animate);
 }
 
