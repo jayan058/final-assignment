@@ -413,7 +413,7 @@ canvas1.addEventListener('click', (event) => {
 
     console.log(y);
 
-    if (!selectedCard) {
+    if (!selectedCard || (selectedCard && y==0)) {
         // Check if a card was clicked
         cards.forEach(card => {
             if (x >= card.x && x <= card.x + card.width && y >= card.y && y <= card.y + card.height) {
