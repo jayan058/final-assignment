@@ -106,8 +106,7 @@ function animate() {
     spawnEnemy()
     updateMandrakes()
     checkCollisions()
-    checkCollisionsBetweenHeroes()
-    checkCollisionsBetweenenemies()
+    
     requestAnimationFrame(animate);
 }
 

@@ -12,48 +12,198 @@ class Hero {
     image: HTMLImageElement;
     width:number;
     height:number;
+    state: 'idle' | 'attacking' | 'hurt' | 'dead' |'dustcloud';
+    attackAnimationFrames: number;
+    hurtAnimationFrames: number;
+    deathAnimationFrames: number;
+    dustCloudAnimationFrames: number;
+    moment:number;
+    // Image sources
     
+    attackImageSrc: string;
+    hurtImageSrc: string;
+    deathImageSrc: string;
+    dustCloudImageSrc: string;
+
+    // Image elements
+    attackImage: HTMLImageElement;
+    hurtImage: HTMLImageElement;
+    deathImage: HTMLImageElement;
+    dustCloudImage: HTMLImageElement;
+    endurance:number
 
 
-    constructor(imageSrc: string, x: number, y: number, speed: number, health: number, firstFrame: number, lastFrame: number, eachWidth: number, eachHeight: number) {
-        this.x = x;
-        this.y = y;
-        this.speed = speed;
-        this.health = health;
-        this.frameX = firstFrame;
-        this.frameY = 0;
-        this.eachWidth = eachWidth;
-        this.eachHeight = eachHeight;
-        this.firstFrame = firstFrame;
-        this.lastFrame = lastFrame;
-        this.image = new Image();
-        this.image.src = imageSrc;
-        this.width=64;
-        this.height=64;
-        this.health=health;
+    constructor(   imageSrc: string,
+       
+        x: number,
+        y: number,
+        speed: number,
+        health: number,
+        firstFrame: number,
+        lastFrame: number,
+        eachWidth: number,
+        eachHeight: number, 
+        attackImageSrc: string,
+        hurtImageSrc: string,
+        deathImageSrc: string,
+        dustCloudImageSrc: string,
+        attackAnimationFrames: number,
+        hurtAnimationFrames: number,
+        deathAnimationFrames: number,
+        dustCloudAnimationFrames: number,endurance:number) {
+            this.x = x;
+            this.y = y;
+            this.speed = speed;
+            this.moment=this.speed
+            this.health = health;
+            this.frameX = firstFrame;
+            this.frameY = 0;
+            this.eachWidth = eachWidth;
+            this.eachHeight = eachHeight;
+            this.firstFrame = firstFrame;
+            this.lastFrame = lastFrame;
+            this.image = new Image();
+            this.image.src = imageSrc;
+            this.width = 64;
+            this.height = 64;
+            this.health = health;
+            this.state = 'idle';
+            this.attackAnimationFrames = attackAnimationFrames;
+            this.hurtAnimationFrames = hurtAnimationFrames;
+            this.deathAnimationFrames = deathAnimationFrames;
+            this.dustCloudAnimationFrames = dustCloudAnimationFrames;
+    
+            // Load additional images
+            this.attackImageSrc = attackImageSrc;
+            this.hurtImageSrc = hurtImageSrc;
+            this.deathImageSrc = deathImageSrc;
+            this.dustCloudImageSrc = dustCloudImageSrc;
+    
+            this.attackImage = new Image();
+            this.attackImage.src = attackImageSrc;
+    
+            this.hurtImage = new Image();
+            this.hurtImage.src = hurtImageSrc;
+    
+            this.deathImage = new Image();
+            this.deathImage.src = deathImageSrc;
+    
+            this.dustCloudImage = new Image();
+            this.dustCloudImage.src = dustCloudImageSrc;
+            this.endurance=endurance
     }
     
   
 
     draw(ctx: CanvasRenderingContext2D) {
+       console.log("Jello");
        
         ctx.fillStyle='gold'
         ctx.font='10px Arial'
         ctx.fillText(`${this.health}`,this.x+18,this.y+15)
         
-        ctx.drawImage(
-            this.image,
-            this.eachWidth * this.frameX, 0,
-            this.eachWidth, this.eachHeight,
-            this.x, this.y,
-            this.width, this.height
-        );
+        switch (this.state) {
+            case 'idle':
+
+            if (gameSpeed % 25 === 0) {
+                if (this.frameX < this.lastFrame) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx.drawImage(
+                    this.image,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y-10,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'attacking':
+
+            if (gameSpeed % 15 === 0) {
+                if (this.frameX < this.attackAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx.drawImage(
+                    this.attackImage,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y-10,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'hurt':
+
+            if (gameSpeed % 15 === 0) {
+                if (this.frameX < this.hurtAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx.drawImage(
+                    this.hurtImage,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y-10,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'dead':
+
+            if (gameSpeed % 100 === 0) {
+                if (this.frameX < this.deathAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx.drawImage(
+                    this.deathImage,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y-10,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'dustcloud':
+
+            if (gameSpeed % 30 === 0) {
+                if (this.frameX < this.dustCloudAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx.drawImage(
+                    this.dustCloudImage,
+                    200* this.frameX, 0,
+                    200, 179,
+                    this.x, this.y-10,
+                    this.width, this.height
+                );
+              
+            break;
+        }
       
       
 
 
       
     }
+
+
+   
+
 
     heroMovement() {
       
@@ -82,7 +232,7 @@ class HeroType2 extends Hero {
 
 class HeroType3 extends Hero {
     constructor(x: number, y: number) {
-        super('./images/hero3run.png', x, y, 0.4, 100, 0, 7, 128, 128);
+        super('./images/hero3run.png', x, y, 0.4, 100, 0, 7, 128, 128,'./images/hero3attack.png','./images/hero3hurt.png','./images/hero3dead.png','./images/mandrake-dust-cloud.png',3,2,2,4,20);
     }
     heroMovement() {
         this.x=this.x+this.speed
@@ -99,7 +249,7 @@ class HeroType3 extends Hero {
 
 class HeroType4 extends Hero {
     constructor(x: number, y: number) {
-        super('./images/hero4run.png', x, y, 0.4, 100, 0, 5, 96.4, 98);
+        super('./images/hero4run.png', x, y, 0.4, 100, 0, 5, 96.4, 98,'./images/hero4attack.png','./images/hero4hurt.png','./images/hero4dead.png','./images/mandrake-dust-cloud.png',2,2,3,4,10);
     }
     heroMovement() {
         this.x=this.x+this.speed
@@ -116,7 +266,27 @@ class HeroType4 extends Hero {
 
 class HeroType5 extends Hero {
     constructor(x: number, y: number) {
-        super('./images/hero5run.png', x, y, 0.4, 100, 0, 5, 96.4, 98);
+        super('./images/hero5run.png', x, y, 0.4, 100, 0, 5, 96.4, 98,'./images/hero5attack.png','./images/hero5hurt.png','./images/hero5dead.png','./images/mandrake-dust-cloud.png',2,0,3,4,10 );
+    }
+
+
+    heroMovement() {
+       this.x=this.x+this.speed
+        // Other movement logic as before
+        if (gameSpeed % 15 === 0) {
+            if (this.frameX < this.lastFrame) {
+                this.frameX += 1;
+            } else {
+                this.frameX = this.firstFrame;
+            }
+        }
+    }
+}
+
+
+class HeroType6 extends Hero {
+    constructor(x: number, y: number) {
+        super('./images/hero6run.png', x, y, 0.4, 100, 0, 7, 128, 128,'./images/hero6attack.png','./images/hero6hurt.png','./images/hero6dead.png','./images/mandrake-dust-cloud.png',3,2,2,4,5 );
     }
 
 
@@ -196,6 +366,7 @@ export function chooseHero() {
     ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
 
     cards.forEach(card => {
+        ctx1.strokeStyle='black'
         ctx1.strokeRect(card.x, card.y, card.width, card.height);
         ctx1.fillStyle = 'purple';
         ctx1.fillRect(card.x, card.y, card.width, card.height);
@@ -277,6 +448,8 @@ canvas1.addEventListener('click', (event) => {
 
 
 
+
+
 export function drawDefenders(){
   
     
@@ -284,18 +457,26 @@ export function drawDefenders(){
         heroes[i].heroMovement()
         heroes[i].draw(ctx1)
     }
+    drawHoverEffect()
+  
 }
 
 // Schedule card addition
 setTimeout(() => {
     audio.play();
     createHeroCard('./images/card4.png', 64 * 7, 0, 0, 9, 96.4, 98, HeroType4,150,'Kings Guard');
-}, 15000);
+}, 0);
 
 setTimeout(() => {
     audio.play();
     createHeroCard(`./images/card5.png`, 64 * 8, 0, 0, 11, 96.4, 98, HeroType5,150,'Viking Hero');
-}, 30000);
+},0);
+
+
+setTimeout(() => {
+    audio.play();
+    createHeroCard(`./images/card6.png`, 64 * 9, 0, 0, 11, 128.2, 130, HeroType6,200,'Fighter');
+},0);
 
 export let resources = 300;
 export let drawHeroCardNow = false;
@@ -305,5 +486,52 @@ export function addResources(x: number) {
     audio.play();
 
 }
+
+let mouseX: number | null = null
+let mouseY: number | null = null;
+
+
+
+canvas1.addEventListener('mousemove', (event) => {
+    const rect = canvas1.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+
+    // Redraw the canvas to update the hover effect
+    drawHoverEffect();
+});
+
+
+function drawHoverEffect() {
+   console.log("Hello");
+   mouseX?mouseX = mouseX - (mouseX % 64):null;
+   mouseY?mouseY = mouseY - (mouseY % 64):null;
+
+
+    // If a card is selected, draw the hero name at the mouse position
+    if (selectedCard && mouseX !== null && mouseY !== null && mouseY >= 64 && mouseY < 512) {
+        console.log(selectedCard);
+        if (gameSpeed % 25 === 0) {
+            if (selectedCard.frameX < selectedCard.lastFrame) {
+                selectedCard.frameX += 1;
+            } else {
+                selectedCard.frameX = selectedCard.firstFrame;
+            }
+        }   
+
+           ctx1.strokeStyle='gold'
+           ctx1.strokeRect(mouseX,mouseY,64,64)
+            ctx1.drawImage(
+                selectedCard.image,
+                selectedCard.eachWidth * selectedCard.frameX, 0,
+                selectedCard.eachWidth, selectedCard.eachHeight,
+                mouseX, mouseY-10,
+                selectedCard.width, selectedCard.height
+            );
+        
+        
+    }
+}
+
 
 

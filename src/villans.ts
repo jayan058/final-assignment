@@ -27,23 +27,8 @@ enemytypes.push(enemy5)
 
 
 
-// Define constants for the sprite sheet frame counts
-const ZOMBIE_HURT_FRAMES =11; // Assuming 6 frames for hurt animation
-const ZOMBIE_ATTACK_FRAMES = 11; // Assuming 8 frames for attack animation
-const ZOMBIE_DEATH_FRAMES = 11; // Assuming 10 frames for death animation
-const ZOMBIE_EXPLOSION_FRAMES = 11; // Assuming 12 frames for explosion animation
 
-const zombieHurtImage = new Image();
-zombieHurtImage.src = './images/zomievillagerhurt.png';
 
-const zombieAttackImage = new Image();
-zombieAttackImage.src = './images/zomievillagerhurt.png';
-
-const zombieDeathImage = new Image();
-zombieDeathImage.src = './images/zomievillagerhurt.png';
-
-const zombieExplosionImage = new Image();
-zombieExplosionImage.src = './images/zomievillagerhurt.png';
 
 
 
@@ -221,6 +206,24 @@ class zombieVillager extends Enemy {
     firstFrame: number;
     lastFrame: number;
     enemytype: any;
+    state: 'idle' | 'attacking' | 'hurt' | 'dead' |'dustcloud';
+    attackAnimationFrames: number;
+    hurtAnimationFrames: number;
+    deathAnimationFrames: number;
+    dustCloudAnimationFrames: number;
+    attackImageSrc: string;
+    hurtImageSrc: string;
+    deathImageSrc: string;
+    dustCloudImageSrc: string;
+
+    // Image elements
+    attackImage: HTMLImageElement;
+    hurtImage: HTMLImageElement;
+    deathImage: HTMLImageElement;
+    dustCloudImage: HTMLImageElement;
+    endurance:number
+    isCollidingWithVilan:boolean;
+    isCollidingWithHero:boolean;
 
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
@@ -234,7 +237,34 @@ class zombieVillager extends Enemy {
         this.eachHeight = 900;
         this.firstFrame = 1;
         this.lastFrame = 11;
-        this.enemytype = enemytypes[1]; // Set the specific image/type for EnemyType2
+        this.enemytype = enemytypes[1];
+         // Set the specific image/type for EnemyType2
+         this.attackAnimationFrames =11;
+            this.hurtAnimationFrames = 11;
+            this.deathAnimationFrames = 14;
+            this.dustCloudAnimationFrames =4;
+    
+            // Load additional images
+            this.attackImageSrc = './images/zomievillagerattack.png';
+            this.hurtImageSrc = './images/zomievillagerhurt.png';
+            this.deathImageSrc = './images/zomievillagerdeath.png';
+            this.dustCloudImageSrc ='./images/mandrake-dust-cloud.png';
+    
+            this.attackImage = new Image();
+            this.attackImage.src = this.attackImageSrc;
+    
+            this.hurtImage = new Image();
+            this.hurtImage.src = this.hurtImageSrc;
+    
+            this.deathImage = new Image();
+            this.deathImage.src = this.deathImageSrc;
+    
+            this.dustCloudImage = new Image();
+            this.dustCloudImage.src = this.dustCloudImageSrc;
+        this.state='idle';
+        this.endurance=30    
+        this.isCollidingWithVilan=false;
+        this.isCollidingWithHero=false;
       
     }
 
@@ -258,11 +288,103 @@ class zombieVillager extends Enemy {
 
     draw() {
      
-    
+     
       ctx1.fillStyle = 'gold';
         ctx1.font = '10px Arial';
         ctx1.fillText(this.health.toString(), this.x + 25, this.y+10 );
-        ctx1.drawImage(this.enemytype, this.eachWidth * this.frameX, 0, this.eachWidth, this.eachHeight, this.x, this.y, this.width, this.height);
+        switch (this.state) {
+            case 'idle':
+
+            if (gameSpeed % 20 === 0) {
+                if (this.frameX < this.lastFrame) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx1.drawImage(
+                    this.enemytype,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'attacking':
+
+            if (gameSpeed % 25 === 0) {
+                if (this.frameX < this.attackAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx1.drawImage(
+                    this.attackImage,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'hurt':
+
+            if (gameSpeed % 20 === 0) {
+                if (this.frameX < this.hurtAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx1.drawImage(
+                    this.hurtImage,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'dead':
+           console.log("Dead");
+           
+            if (gameSpeed % 30 === 0) {
+                if (this.frameX < this.deathAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx1.drawImage(
+                    this.deathImage,
+                    this.eachWidth * this.frameX, 0,
+                    this.eachWidth, this.eachHeight,
+                    this.x, this.y,
+                    this.width, this.height
+                );
+              
+                break;
+            case 'dustcloud':
+
+            if (gameSpeed % 20 === 0) {
+                if (this.frameX < this.dustCloudAnimationFrames) {
+                    this.frameX += 1;
+                } else {
+                    this.frameX = this.firstFrame;
+                }
+            }
+                ctx1.drawImage(
+                    this.dustCloudImage,
+                    200 * this.frameX, 0,
+                    200, 179,
+                    this.x, this.y,
+                    this.width, this.height
+                );
+              
+            break;
+        }
     }
 }
 
@@ -439,11 +561,11 @@ class Ghost extends Enemy {
 const rows = [64,128,192,256,320,384,448,512]; // Define Y positions of each row
 
 const enemyTypeClasses = [
-    Blade, // Assuming Blade corresponds to enemytype[0]
+    // Blade, // Assuming Blade corresponds to enemytype[0]
     zombieVillager, // Assuming zombieVillager corresponds to enemytype[1]
-    Bat, // Assuming Bat corresponds to enemytype[2]
-    Raven, // Assuming Raven corresponds to enemytype[3]
-    Ghost // Assuming Ghost corresponds to enemytype[4]
+    // Bat, // Assuming Bat corresponds to enemytype[2]
+    // Raven, // Assuming Raven corresponds to enemytype[3]
+    // Ghost // Assuming Ghost corresponds to enemytype[4]
 ];
 let spawnInterval = 5000; // Initial interval between enemy spawns in milliseconds
 let lastSpawnTime = -spawnInterval; // Initialize last spawn time to ensure immediate spawn
@@ -461,14 +583,14 @@ export function spawnEnemy() {
         const enemyTypeIndex = Math.floor(Math.random() * enemyTypeClasses.length);
 
         // Create new enemy instance using the selected class
-        const newEnemy = new enemyTypeClasses[enemyTypeIndex](canvas1.width, rowY);
+        const newEnemy = new enemyTypeClasses[enemyTypeIndex](canvas1.width, rowY,);
 
         // Push the new enemy into the enemies array
         enemies.push(newEnemy);
         
         // Adjust spawn interval dynamically
         if (spawnInterval > 1600) {
-            spawnInterval -= 100; // Decrease spawn interval by 200 milliseconds
+            spawnInterval -= 50; // Decrease spawn interval by 200 milliseconds
           
             
         }
@@ -482,7 +604,7 @@ export function drawVillan() {
         enemies[i].draw();
 
         // Remove enemies that are off-screen or have no health
-        if (enemies[i].x + enemies[i].width < 0 || enemies[i].health <= 0) {
+        if (enemies[i].x + enemies[i].width < 0) {
             enemies.splice(i, 1);
             i--;
         }
