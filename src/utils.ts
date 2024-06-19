@@ -1,10 +1,10 @@
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
 
-
+import {  occupiedGridPositions} from "./heroes";
 import { resources,heroes} from "./heroes";
 import { enemies } from "./villans";
-
+import { projectiles } from "./projectiles";
 function showResources(){
     ctx1.fillStyle = 'gold';
    ctx1.font='20px Arial'
@@ -15,6 +15,9 @@ function showResources(){
 
 
 export function checkCollisions() {
+
+
+    
     for (let hero of heroes) {
         for (let enemy of enemies) {
             if (hero.x < enemy.x + enemy.width &&
@@ -33,6 +36,8 @@ export function checkCollisions() {
                     enemy.state = 'attacking';
                     handleCollision(hero, enemy);
                 }
+
+                
             }
 
            
@@ -40,9 +45,8 @@ export function checkCollisions() {
     }
 }
 
-function handleCollision(hero, enemy) {
+function handleCollision(hero:any, enemy:any) {
     let heroAttack = true;
-    let enemyAttack = true;
 
     const attackCycle = setInterval(() => {
         if (hero.health <= 0 || enemy.health <= 0) {
@@ -56,7 +60,11 @@ function handleCollision(hero, enemy) {
                
                 setTimeout(() => {
                   enemy.speed=enemy.moment
-                    removeEntity(heroes, hero);
+                 removeEntity(heroes, hero);
+                 const positionString = `${hero.x},${hero.y}`;
+        
+                 // Remove the hero's position from occupiedGridPositions
+                 occupiedGridPositions.delete(positionString);
                     
                 }, 1000); // Adjust as needed
             } else {
@@ -99,7 +107,7 @@ function handleCollision(hero, enemy) {
     }, 500);
 }
 
-function removeEntity(array, entity) {
+export function removeEntity(array:any, entity:any) {
     const index = array.indexOf(entity);
     if (index > -1) {
         array.splice(index, 1);
@@ -134,6 +142,55 @@ for (let i = 0; i < enemies.length; i++) {
         }
     }
 }
+
+export function collisionWithProjectile() {
+    for (let enemy of enemies) {
+        for (let projectile of projectiles) {
+            if (projectile.x < enemy.x + enemy.width &&
+                projectile.x + projectile.width > enemy.x &&
+                projectile.y < enemy.y + enemy.height &&
+                projectile.y + projectile.height > enemy.y) {
+                
+                // Remove the projectile on collision
+                removeEntity(projectiles, projectile);
+
+                // Reduce enemy health
+                enemy.health -= enemy.endurance;
+
+                if (enemy.health <= 0) {
+                    // Set enemy state to dead
+                    enemy.state = 'dead';
+                    enemy.speed = 0;
+
+                    // After some time, change state to dustcloud
+                    setTimeout(() => {
+                        enemy.state = 'dustcloud';
+
+                        // Remove the enemy from the game after another delay
+                        setTimeout(() => {
+                            removeEntity(enemies, enemy);
+                        }, 500); // Adjust this delay as needed for dustcloud duration
+                    }, 500); // Adjust this delay as needed for dead state duration
+                } else {
+                    // Set enemy to hurt state and reduce speed to zero
+                    enemy.state = 'hurt';
+                     // Save the original speed
+                    enemy.speed = 0;
+
+                    // Restore enemy state and speed after 1 second (1000 milliseconds)
+                    setTimeout(() => {
+                        enemy.state = 'idle';
+                        enemy.speed = enemy.moment;
+                    }, 500); // Adjust the delay as needed
+                }
+            }
+        }
+    }
+}
+
+
+
+
 
 
 

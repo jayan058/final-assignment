@@ -348,7 +348,7 @@ class zombieVillager extends Enemy {
               
                 break;
             case 'dead':
-           console.log("Dead");
+          
            
             if (gameSpeed % 30 === 0) {
                 if (this.frameX < this.deathAnimationFrames) {

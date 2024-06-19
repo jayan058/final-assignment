@@ -13,8 +13,8 @@ const startButton = document.getElementById('startButton') as HTMLButtonElement;
 
 
 startButton.addEventListener('click', () => {
-//        audio.play()
-// audio.loop=true
+       audio.play()
+audio.loop=true
        showGameScreen()
        animate()
 

@@ -1,5 +1,5 @@
 
-import { checkCollisions, checkCollisionsBetweenHeroes, checkCollisionsBetweenenemies, showResources } from "./utils";
+import { checkCollisions, showResources,collisionWithProjectile } from "./utils";
 
 import {  drawMandrake, updateMandrakes } from "./mandrake";
 
@@ -55,7 +55,6 @@ function makeTheGrid() {
 
 makeTheGrid();
 
-console.log(grid);
 
 function drawTheGrid() {
     for (let i = 0; i < grid.length; i++) {
@@ -106,6 +105,7 @@ function animate() {
     spawnEnemy()
     updateMandrakes()
     checkCollisions()
+    collisionWithProjectile()
     
     requestAnimationFrame(animate);
 }
