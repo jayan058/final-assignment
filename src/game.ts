@@ -5,6 +5,8 @@ import {  drawMandrake, updateMandrakes } from "./mandrake";
 
 import { drawVillan, spawnEnemy } from "./villans";
 import { chooseHero, drawDefenders } from "./heroes";
+import { drawTower } from "./towers";
+
 
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
@@ -46,8 +48,8 @@ class Gridcell {
 const grid: Gridcell[] = [];
 
 function makeTheGrid() {
-    for (let i = 64; i < canvas1.height - 64 ; i += gridCellHeight) {
-        for (let j = 0; j < canvas1.width; j += gridCellWidth) {
+    for (let i = 64; i < canvas1.height ; i += gridCellHeight) {
+        for (let j = 128; j < canvas1.width; j += gridCellWidth) {
             grid.push(new Gridcell(j, i)); // Replace with your initial tile image path
         }
     }
@@ -95,10 +97,11 @@ canvas1.addEventListener('mousemove', function(event) {
 function animate() {
    
     ctx1.clearRect(0, 0, canvas1.width, canvas1.height); 
+  
       chooseHero()
     drawTheGrid();
     showResources();
- 
+   
    drawDefenders()
     gameSpeed++
     drawVillan() 
@@ -107,8 +110,13 @@ function animate() {
     checkCollisions()
     collisionWithProjectile()
     
+  drawTower()
+   
     requestAnimationFrame(animate);
 }
+
+
+
 
 animate();
 setInterval(drawMandrake, 5000);

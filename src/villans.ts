@@ -4,7 +4,7 @@ const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
 
 
-const ROW_COUNT = 7;
+const ROW_COUNT = 8;
 
 
 let enemytypes:any=[]
@@ -558,7 +558,7 @@ class Ghost extends Enemy {
 
 
 // Adjust these constants as needed
-const rows = [64,128,192,256,320,384,448,512]; // Define Y positions of each row
+const rows = [64,128,192,256,320,384,448,512,576]; // Define Y positions of each row
 
 const enemyTypeClasses = [
     // Blade, // Assuming Blade corresponds to enemytype[0]
@@ -589,8 +589,8 @@ export function spawnEnemy() {
         enemies.push(newEnemy);
         
         // Adjust spawn interval dynamically
-        if (spawnInterval > 1600) {
-            spawnInterval -= 50; // Decrease spawn interval by 200 milliseconds
+        if (spawnInterval > 1500) {
+            spawnInterval -= 500; // Decrease spawn interval by 200 milliseconds
           
             
         }

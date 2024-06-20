@@ -67,7 +67,7 @@ export class Projectile {
             
     
             // Check if the projectile has traveled 30 pixels from the fired position
-            if (Math.abs(this.x - this.firedPosition) >= 64*3.5) {
+            if (Math.abs(this.x - this.firedPosition) >= 64*2) {
                 removeEntity(projectiles, projectile);
             } else {
                 this.x += this.speed;

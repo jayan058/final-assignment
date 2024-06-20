@@ -66,7 +66,7 @@ function handleCollision(hero:any, enemy:any) {
                  // Remove the hero's position from occupiedGridPositions
                  occupiedGridPositions.delete(positionString);
                     
-                }, 1000); // Adjust as needed
+                }, 800); // Adjust as needed
             } else {
                 hero.state = 'idle';
             }
@@ -81,7 +81,7 @@ function handleCollision(hero:any, enemy:any) {
                 setTimeout(() => {
                     hero.speed=hero.moment
                     removeEntity(enemies, enemy);
-                }, 1000); // Adjust as needed
+                }, 800); // Adjust as needed
             }else {
                 enemy.state = 'idle';
             }
@@ -136,8 +136,8 @@ for (let i = 0; i < enemies.length; i++) {
 
             // Resume movement after a delay with speed 0.2
             setTimeout(() => {
-                enemy1.speed = 0.2;
-                enemy2.speed = 0.2;
+                enemy1.speed = enemy1.moment;
+                enemy2.speed = enemy2.moment;
             }, 1000); // Adjust delay as needed
         }
     }

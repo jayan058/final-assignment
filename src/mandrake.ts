@@ -97,8 +97,8 @@ function getRandomTilePosition() {
     const maxColumns = canvas1.width / gridCellWidth;
     const maxRows = canvas1.height / gridCellHeight;
 
-    const randomColumn = Math.floor(Math.random() * maxColumns);
-    const randomRow = Math.floor(Math.random() * (maxRows - 3)) + 1;
+    const randomColumn = Math.floor(Math.random() * (maxColumns - 2)) + 2;
+    const randomRow = Math.floor(Math.random() * (maxRows - 1)) + 1;
 
     const x = randomColumn * gridCellWidth;
     const y = randomRow * gridCellHeight;

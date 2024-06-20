@@ -470,7 +470,7 @@ canvas1.addEventListener('click', (event) => {
         });
     } else {
         // Check if y is within the valid range (not in the first or last row)
-        if (y >= 64 && y <= 512) {
+        if (y >= 64 && y <= 564 && x>=128) {
             // Special hero types that can be placed anywhere
             if (selectedCard.heroClass === HeroType3 || selectedCard.heroClass === HeroType4 || selectedCard.heroClass === HeroType5 || selectedCard.heroClass === HeroType6) {
                 const newHero = new selectedCard.heroClass(x, y);
@@ -503,7 +503,6 @@ canvas1.addEventListener('click', (event) => {
 
 export function drawDefenders(){
   
-    
         for(var i=0;i<=heroes.length-1;i++){
         heroes[i].heroMovement()
         heroes[i].draw(ctx1)
