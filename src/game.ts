@@ -1,11 +1,12 @@
 
-import { checkCollisions, showResources,collisionWithProjectile } from "./utils";
+import { checkCollisions, showResources,collisionWithProjectile, checkCollisionWithTower } from "./utils";
 
 import {  drawMandrake, updateMandrakes } from "./mandrake";
 
 import { drawVillan, spawnEnemy } from "./villans";
 import { chooseHero, drawDefenders } from "./heroes";
 import { drawTower } from "./towers";
+import { checkCollisionWithProjectileFromTower } from "./utils";
 
 
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
@@ -15,10 +16,11 @@ canvas1.height = 576;
 canvas1.width = 1344;
 export let gameSpeed=0
 
+
 export const gridCellWidth = 64;
 export const gridCellHeight = 64;
 const hoverImage = new Image();
-hoverImage.src = './images/hovertile.png'; // Replace with the path to your hover image
+hoverImage.src = './images/hovertile.png'; 
 
 class Gridcell {
     x: number;
@@ -50,7 +52,7 @@ const grid: Gridcell[] = [];
 function makeTheGrid() {
     for (let i = 64; i < canvas1.height ; i += gridCellHeight) {
         for (let j = 128; j < canvas1.width; j += gridCellWidth) {
-            grid.push(new Gridcell(j, i)); // Replace with your initial tile image path
+            grid.push(new Gridcell(j, i)); 
         }
     }
 }
@@ -109,8 +111,9 @@ function animate() {
     updateMandrakes()
     checkCollisions()
     collisionWithProjectile()
-    
-  drawTower()
+    drawTower()
+    checkCollisionWithTower()
+    checkCollisionWithProjectileFromTower()
    
     requestAnimationFrame(animate);
 }

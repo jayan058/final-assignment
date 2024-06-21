@@ -5,6 +5,8 @@ import {  occupiedGridPositions} from "./heroes";
 import { resources,heroes} from "./heroes";
 import { enemies } from "./villans";
 import { projectiles } from "./projectiles";
+import { towers } from "./towers";
+import { projectilesfortowers } from "./towers";
 function showResources(){
     ctx1.fillStyle = 'gold';
    ctx1.font='20px Arial'
@@ -114,35 +116,6 @@ export function removeEntity(array:any, entity:any) {
     }
 }
 
-    
-
-for (let i = 0; i < enemies.length; i++) {
-    for (let j = i + 1; j < enemies.length; j++) {
-        let enemy1 = enemies[i];
-        let enemy2 = enemies[j];
-        if (enemy1.x < enemy2.x + enemy2.width &&
-            enemy1.x + enemy1.width > enemy2.x &&
-            enemy1.y < enemy2.y + enemy2.height &&
-            enemy1.y + enemy1.height > enemy2.y) {
-
-            enemy1.isCollidingWithVillain = true;
-            enemy2.isCollidingWithVillain = true;
-
-            // Stop both enemies
-            enemy1.speed = 0;
-            enemy2.speed = 0;
-            enemy1.state = 'idle';
-            enemy2.state = 'idle';
-
-            // Resume movement after a delay with speed 0.2
-            setTimeout(() => {
-                enemy1.speed = enemy1.moment;
-                enemy2.speed = enemy2.moment;
-            }, 1000); // Adjust delay as needed
-        }
-    }
-}
-
 export function collisionWithProjectile() {
     for (let enemy of enemies) {
         for (let projectile of projectiles) {
@@ -187,6 +160,84 @@ export function collisionWithProjectile() {
         }
     }
 }
+
+
+export function checkCollisionWithTower(){
+    for (let tower of towers) {
+        for (let enemy of enemies) {
+            if (tower.x < enemy.x + enemy.width &&
+                tower.x + tower.width > enemy.x &&
+                tower.y < enemy.y + enemy.height &&
+                tower.y + tower.height > enemy.y) {
+                    enemy.speed=0
+                    enemy.x=enemy.x
+                   enemy.state='attacking';
+         
+                   
+
+                 
+
+                }
+                
+              
+              
+            }
+        }
+
+        
+
+}
+export function checkCollisionWithProjectileFromTower(){
+    for (let projectilefortower of projectilesfortowers) {
+        for (let enemy of enemies) {
+            if (projectilefortower.x < enemy.x + enemy.width &&
+                projectilefortower.x + projectilefortower.width > enemy.x &&
+                projectilefortower.y < enemy.y + enemy.height &&
+                projectilefortower.y + projectilefortower.height > enemy.y) {
+               
+                          // Remove the projectile on collision
+                removeEntity(projectilesfortowers, projectilefortower);
+
+                // Reduce enemy health
+                enemy.health -= enemy.endurance+10;
+
+                if (enemy.health <= 0) {
+                    // Set enemy state to dead
+                    enemy.state = 'dead';
+                    enemy.speed = 0;
+
+                    // After some time, change state to dustcloud
+                    setTimeout(() => {
+                        enemy.state = 'dustcloud';
+
+                        // Remove the enemy from the game after another delay
+                        setTimeout(() => {
+                            removeEntity(enemies, enemy);
+                        }, 500); // Adjust this delay as needed for dustcloud duration
+                    }, 500); // Adjust this delay as needed for dead state duration
+                } else {
+                    // Set enemy to hurt state and reduce speed to zero
+                    enemy.state = 'hurt';
+                     // Save the original speed
+                    enemy.speed = 0;
+
+                    // Restore enemy state and speed after 1 second (1000 milliseconds)
+                    setTimeout(() => {
+                        enemy.state = 'idle';
+                        enemy.speed = enemy.moment;
+                    }, 500); // Adjust the delay as needed
+                }
+                }
+              
+            }
+        }
+
+}
+
+
+
+
+
 
 
 

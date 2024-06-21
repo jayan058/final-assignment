@@ -1,5 +1,5 @@
 import { Projectile, projectiles } from "./projectiles";
-import { enemies } from "./villans";
+
 
 class Hero {
     x: number;
@@ -107,7 +107,7 @@ class Hero {
         
         ctx.fillStyle='gold'
         ctx.font='10px Arial'
-        ctx.fillText(`${this.health}`,this.x+18,this.y+15)
+        ctx.fillText(`${this.health}`,this.x+18,this.y)
         
         switch (this.state) {
             case 'idle':
@@ -216,7 +216,7 @@ class Hero {
 
     heroMovement() {
       
-        // Other movement logic as before
+      
         if (gameSpeed % 15 === 0) {
             if (this.frameX < this.lastFrame) {
                 this.frameX += 1;
@@ -275,8 +275,8 @@ class HeroType2 extends Hero {
 }
 
 class HeroType3 extends Hero {
-    constructor(x: number, y: number,projectileImageSrc:string) {
-        super('./images/hero3run.png', x, y, 0.4, 100, 0, 7, 128, 128,'./images/hero3attack.png','./images/hero3hurt.png','./images/hero3dead.png','./images/mandrake-dust-cloud.png',3,2,2,4,20,projectileImageSrc);
+    constructor(x: number, y: number) {
+        super('./images/hero3run.png', x, y, 0.4, 100, 0, 7, 128, 128,'./images/hero3attack.png','./images/hero3hurt.png','./images/hero3dead.png','./images/mandrake-dust-cloud.png',3,2,2,4,20,'projectileImageSrc');
     }
     heroMovement() {
         this.x=this.x+this.speed
@@ -292,8 +292,8 @@ class HeroType3 extends Hero {
 }
 
 class HeroType4 extends Hero {
-    constructor(x: number, y: number,projectileImageSrc:string) {
-        super('./images/hero4run.png', x, y, 0.4, 100, 0, 5, 96.4, 98,'./images/hero4attack.png','./images/hero4hurt.png','./images/hero4dead.png','./images/mandrake-dust-cloud.png',2,2,3,4,10,projectileImageSrc);
+    constructor(x: number, y: number) {
+        super('./images/hero4run.png', x, y, 0.4, 100, 0, 5, 96.4, 98,'./images/hero4attack.png','./images/hero4hurt.png','./images/hero4dead.png','./images/mandrake-dust-cloud.png',2,2,3,4,100,'projectileImageSrc');
     }
     heroMovement() {
         this.x=this.x+this.speed
@@ -309,14 +309,14 @@ class HeroType4 extends Hero {
 }
 
 class HeroType5 extends Hero {
-    constructor(x: number, y: number,projectileImageSrc:string) {
-        super('./images/hero5run.png', x, y, 0.4, 100, 0, 5, 96.4, 98,'./images/hero5attack.png','./images/hero5hurt.png','./images/hero5dead.png','./images/mandrake-dust-cloud.png',2,0,3,4,10,projectileImageSrc );
+    constructor(x: number, y: number) {
+        super('./images/hero5run.png', x, y, 0.4, 100, 0, 5, 96.4, 98,'./images/hero5attack.png','./images/hero5hurt.png','./images/hero5dead.png','./images/mandrake-dust-cloud.png',2,0,3,4,10,'projectileImageSrc' );
     }
 
 
     heroMovement() {
        this.x=this.x+this.speed
-        // Other movement logic as before
+     
         if (gameSpeed % 15 === 0) {
             if (this.frameX < this.lastFrame) {
                 this.frameX += 1;
@@ -329,14 +329,14 @@ class HeroType5 extends Hero {
 
 
 class HeroType6 extends Hero {
-    constructor(x: number, y: number,projectileImageSrc:string) {
-        super('./images/hero6run.png', x, y, 0.4, 100, 0, 7, 128, 128,'./images/hero6attack.png','./images/hero6hurt.png','./images/hero6dead.png','./images/mandrake-dust-cloud.png',3,2,2,4,5,projectileImageSrc );
+    constructor(x: number, y: number) {
+        super('./images/hero6run.png', x, y, 0.4, 100, 0, 7, 128, 128,'./images/hero6attack.png','./images/hero6hurt.png','./images/hero6dead.png','./images/mandrake-dust-cloud.png',3,2,2,4,5,'projectileImageSrc' );
     }
 
 
     heroMovement() {
        this.x=this.x+this.speed
-        // Other movement logic as before
+
         if (gameSpeed % 15 === 0) {
             if (this.frameX < this.lastFrame) {
                 this.frameX += 1;
@@ -346,6 +346,32 @@ class HeroType6 extends Hero {
         }
     }
 }
+
+
+class HeroType7 extends Hero {
+    shootInterval: number;
+    lastShotTime: number;
+    constructor(x: number, y: number) {
+        super('./images/hero7attack.png', x, y, 0.2, 100, 0, 3, 130,130,'./images/hero7attack.png','./images/hero7dead.png','./images/hero1dead.png','./images/mandrake-dust-cloud.png',3,1,5,4,10,'./images/jinifireball.png');
+        this.shootInterval = 1000; // Time in milliseconds between shots
+        this.lastShotTime = 500;
+    }
+
+    heroMovement(): void {
+        const currentTime = Date.now();
+        if (currentTime - this.lastShotTime >= this.shootInterval) {
+            this.shoot();
+            this.lastShotTime = currentTime;
+        }
+    }
+    shoot() {
+        const projectile = new Projectile(this.x + this.width-30, this.y, 2, this.projectileImageSrc, 'fireball',64,64,0,7,258,258);
+        projectiles.push(projectile);
+    }
+   
+
+}
+
 const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
 const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
 
@@ -369,13 +395,15 @@ interface HeroCard {
     heroClass: new (x: number, y: number) => Hero;
     cost:number;
     name:string
+    imageX:number;
+    imageY:number;
 }
 
 const cards: HeroCard[] = [];
 export const heroes: Hero[] = [];
 let selectedCard: HeroCard | null = null;
 
-function createHeroCard(imageSrc: string, x: number, y: number, firstFrame: number, lastFrame: number, eachWidth: number, eachHeight: number, heroClass: new (x: number, y: number) => Hero,cost:number,name:string): HeroCard {
+function createHeroCard(imageSrc: string, x: number, y: number, firstFrame: number, lastFrame: number, eachWidth: number, eachHeight: number, heroClass: new (x: number, y: number) => Hero,cost:number,name:string,imageX:number,imageY:number): HeroCard {
     const image = new Image();
     image.src = imageSrc;
 
@@ -394,7 +422,9 @@ function createHeroCard(imageSrc: string, x: number, y: number, firstFrame: numb
         image,
         heroClass,
          cost:cost,
-        name:name
+        name:name,
+        imageX:imageX,
+        imageY:imageY
     };
 
     cards.push(newCard);
@@ -402,9 +432,9 @@ function createHeroCard(imageSrc: string, x: number, y: number, firstFrame: numb
 }
 
 // Initial cards
-createHeroCard('./images/card1.png', 64 * 4, 0, 0, 21, 128, 128, HeroType1,100,'Archer');
-createHeroCard('./images/card2.png', 64 * 5, 0, 0, 11, 128, 128, HeroType2,100,'Wizard');
-createHeroCard('./images/card3.png', 64 * 6, 0, 0, 19, 128, 128, HeroType3,100,'Swordsman');
+createHeroCard('./images/card1.png', 64 * 4, 0, 0, 21, 128, 128, HeroType1,100,'Archer',64*4,0);
+createHeroCard('./images/card2.png', 64 * 5, 0, 0, 11, 128, 128, HeroType2,100,'Wizard',64*5,0);
+createHeroCard('./images/card3.png', 64 * 6, 0, 0, 19, 128, 128, HeroType3,100,'Swordsman',64*6,0);
 
 export function chooseHero() {
     ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
@@ -415,7 +445,7 @@ export function chooseHero() {
         ctx1.fillStyle = 'purple';
         ctx1.fillRect(card.x, card.y, card.width, card.height);
 
-        if (gameSpeed % 15 === 0) {
+        if (gameSpeed % 17 === 0) {
             if (card.frameX < card.lastFrame) {
                 card.frameX += 1;
             } else {
@@ -424,13 +454,13 @@ export function chooseHero() {
         }
         ctx1.fillStyle='gold'
         ctx1.font='10px Arial'
-        ctx1.fillText(`${card.name}`,card.x+5,card.y+10)
-        ctx1.fillText(`Cost:${card.cost}`,card.x+5,card.y+20)
+        ctx1.fillText(`${card.name}`,card.x+11,card.y+10)
+        ctx1.fillText(`Cost:${card.cost}`,card.x+11,card.y+20)
         ctx1.drawImage(
             card.image,
             card.eachWidth * card.frameX, 0,
             card.eachWidth, card.eachHeight,
-            card.x, card.y,
+            card.imageX, card.imageY,
             card.width, card.height
         );
     });
@@ -469,10 +499,10 @@ canvas1.addEventListener('click', (event) => {
             }
         });
     } else {
-        // Check if y is within the valid range (not in the first or last row)
+        // Check if y is within the valid range (not in the first  row)
         if (y >= 64 && y <= 564 && x>=128) {
             // Special hero types that can be placed anywhere
-            if (selectedCard.heroClass === HeroType3 || selectedCard.heroClass === HeroType4 || selectedCard.heroClass === HeroType5 || selectedCard.heroClass === HeroType6) {
+            if (selectedCard.heroClass === HeroType3 || selectedCard.heroClass === HeroType4 || selectedCard.heroClass === HeroType5 || selectedCard.heroClass === HeroType6 ||selectedCard.heroClass==HeroType7) {
                 const newHero = new selectedCard.heroClass(x, y);
                 heroes.push(newHero);
             } else if ((!isGridOccupied(x, y) && selectedCard.heroClass==HeroType1) || (!isGridOccupied(x, y) && selectedCard.heroClass==HeroType2)  ) {
@@ -521,18 +551,23 @@ export function drawDefenders(){
 // Schedule card addition
 setTimeout(() => {
     audio.play();
-    createHeroCard('./images/card4.png', 64 * 7, 0, 0, 9, 96.4, 98, HeroType4,150,'Kings Guard');
+    createHeroCard('./images/card4.png', 64 * 7, 0, 0, 9, 96.4, 98, HeroType4,150,'Kings Guard',64*7,0);
 }, 0);
 
 setTimeout(() => {
     audio.play();
-    createHeroCard(`./images/card5.png`, 64 * 8, 0, 0, 11, 96.4, 98, HeroType5,150,'Viking Hero');
+    createHeroCard(`./images/card5.png`, 64 * 8, 0, 0, 11, 96.4, 98, HeroType5,150,'Viking Hero',64*8,0);
 },0);
 
 
 setTimeout(() => {
     audio.play();
-    createHeroCard(`./images/card6.png`, 64 * 9, 0, 0, 11, 128.2, 130, HeroType6,200,'Fighter');
+    createHeroCard(`./images/card6.png`, 64 * 9, 0, 0, 11, 128.2, 130, HeroType6,200,'Fighter',64*9,0);
+},0);
+
+setTimeout(() => {
+    audio.play();
+    createHeroCard(`./images/card7.png`, 64 * 10, 0, 0, 6, 130,130, HeroType7,200,'Jinn',64*10,10);
 },0);
 
 export let resources = 300;
@@ -554,7 +589,7 @@ canvas1.addEventListener('mousemove', (event) => {
     mouseX = event.clientX - rect.left;
     mouseY = event.clientY - rect.top;
 
-    // Redraw the canvas to update the hover effect
+ 
     drawHoverEffect();
 });
 
@@ -566,7 +601,7 @@ function drawHoverEffect() {
 
 
     // If a card is selected, draw the hero name at the mouse position
-    if (selectedCard && mouseX !== null && mouseY !== null && mouseY >= 64 && mouseY < 512) {
+    if (selectedCard && mouseX !== null && mouseY !== null && mouseY >= 64 && mouseY < 576 && mouseX>=128) {
       
         if (gameSpeed % 25 === 0) {
             if (selectedCard.frameX < selectedCard.lastFrame) {

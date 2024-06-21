@@ -17,6 +17,7 @@ enemy2.src='./images/enemy2.png'
 enemytypes.push(enemy2)
 const enemy3=new Image()
 enemy3.src='./images/enemy3.png'
+
 enemytypes.push(enemy3)
 const enemy4=new Image()
 enemy4.src='./images/enemy4.png'
@@ -79,7 +80,7 @@ class Blade extends Enemy {
 
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth-30, gridCellHeight-30);
-        this.speed = 0.2;
+        this.speed = 1;
         this.moment=this.speed;
         this.health = 100;
         this.pointsAwarded = this.health;
@@ -205,7 +206,7 @@ class zombieVillager extends Enemy {
     eachHeight: number;
     firstFrame: number;
     lastFrame: number;
-    enemytype: any;
+    enemytype: HTMLImageElement;
     state: 'idle' | 'attacking' | 'hurt' | 'dead' |'dustcloud';
     attackAnimationFrames: number;
     hurtAnimationFrames: number;
@@ -227,7 +228,7 @@ class zombieVillager extends Enemy {
 
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
-        this.speed = 0.2;
+        this.speed = 0.3;
         this.moment=this.speed
         this.health = 120;
         this.pointsAwarded = this.health;
@@ -400,7 +401,7 @@ class Bat extends Enemy {
     eachHeight: number;
     firstFrame: number;
     lastFrame: number;
-    enemytype: any; // Assuming this is the image or type identifier
+    enemytype:HTMLImageElement; // Assuming this is the image or type identifier
 
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
@@ -455,7 +456,7 @@ class Raven extends Enemy {
     eachHeight: number;
     firstFrame: number;
     lastFrame: number;
-    enemytype: any; // Assuming this is the image or type identifier
+    enemytype: HTMLImageElement; // Assuming this is the image or type identifier
 
     constructor(x: number, y: number) {
         super(x, y, gridCellWidth-30, gridCellHeight - 30); // Adjust width and height if needed
@@ -511,7 +512,7 @@ class Ghost extends Enemy {
     eachHeight: number;
     firstFrame: number;
     lastFrame: number;
-    enemytype: any;
+    enemytype: HTMLImageElement;
     attackInterval: number;
    
 
@@ -590,7 +591,7 @@ export function spawnEnemy() {
         
         // Adjust spawn interval dynamically
         if (spawnInterval > 1500) {
-            spawnInterval -= 500; // Decrease spawn interval by 200 milliseconds
+            spawnInterval -= 100; // Decrease spawn interval by 200 milliseconds
           
             
         }
