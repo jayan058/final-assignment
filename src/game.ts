@@ -4,16 +4,34 @@ import {
   collisionWithProjectile,
   checkCollisionWithTower,
 } from "./utils";
-import { drawMandrake, updateMandrakes } from "./mandrake";
-import { drawVillan, enemies, wave1Enemies } from "./villans";
-import { chooseHero, drawDefenders } from "./heroes";
-import { drawTower } from "./towers";
+import { drawMandrake, updateMandrakes, mandrakes } from "./mandrake";
+import { drawVillan, enemies, villanprojectiles, wave1Enemies } from "./villans";
+import {
+  chooseHero,
+  drawDefenders,
+  heroes,
+  initializeResources,
+  occupiedGridPositions,
+} from "./heroes";
+import { drawTower, towers } from "./towers";
 import { checkCollisionWithProjectileFromTower } from "./utils";
-import { waveCountdown, updateWaveTime } from "./countdown";
+import { waveCountdown } from "./countdown";
 import { wave2Enemies } from "./wavetwoenemies";
 import { wave3Enemies } from "./wavethreeeenemies";
+import { drawGameOverScreen } from "./gameover";
+import { Tower, projectilesfortowers } from "./towers";
+import { projectiles } from "./projectiles";
+import { drawTrees } from "./trees";
+import { drawMessages } from "./floatingmessage";
+
 const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
 const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
+const initialTowerPositions = [
+  { x: 64, y: 0 },
+  { x: 192, y: 0 },
+  { x: 320, y: 0 },
+  { x: 448, y: 0 },
+];
 
 canvas1.height = 576;
 canvas1.width = 1344;
@@ -24,7 +42,7 @@ export const gridCellHeight = 64;
 const hoverImage = new Image();
 hoverImage.src = "./images/hovertile.png";
 
-let currentWave = 1;
+export let currentWave = 1;
 let allEnemies: any[] = [];
 
 const countdownBarWidth = 64 * 4; // Width of the countdown bar
@@ -63,15 +81,6 @@ class Gridcell {
 
 const grid: Gridcell[] = [];
 
-function makeTheGrid() {
-  grid.length = 0; // Clear the grid array
-  for (let i = 64; i < canvas1.height; i += gridCellHeight) {
-    for (let j = 128; j < canvas1.width; j += gridCellWidth) {
-      grid.push(new Gridcell(j, i));
-    }
-  }
-}
-
 function drawTheGrid() {
   for (let i = 0; i < grid.length; i++) {
     grid[i].draw();
@@ -87,7 +96,7 @@ let gameStarted = false;
 
 let waveStartTime: number = 0;
 let waveDuration: number = 100;
-let timeBetweenWaves: number = 1.5;
+let timeBetweenWaves: number = 1;
 
 function drawStartButton() {
   ctx1.fillStyle = "#4CAF50";
@@ -124,6 +133,8 @@ function drawGameTitleAndInstructions() {
 }
 
 canvas1.addEventListener("click", function (event) {
+  console.log("Hello");
+
   const rect = canvas1.getBoundingClientRect();
   const mouseX = event.clientX - rect.left;
   const mouseY = event.clientY - rect.top;
@@ -137,7 +148,7 @@ canvas1.addEventListener("click", function (event) {
   ) {
     if (!gameStarted) {
       gameStarted = true;
-      resetGame();
+
       waveStartTime = Date.now(); // Start the wave countdown
 
       animate();
@@ -182,8 +193,31 @@ canvas1.addEventListener("mousemove", function (event) {
 });
 
 function resetGame() {
+  spawnInterval = 5000;
+  projectilesfortowers.length = 0;
+  mandrakes.length = 0;
+  projectiles.length = 0;
+  occupiedGridPositions.clear();
+  heroes.length = 0;
+  towers.length = 0;
+  initialTowerPositions.forEach((pos) => {
+    towers.push(new Tower(128, 128, 0, pos.x, pos.y, 11, 0));
+  });
+  console.log(gameStarted);
   gameSpeed = 0;
-  makeTheGrid();
+  waveProgress = countdownBarWidth;
+  villanprojectiles.length=0
+  currentWave = 1;
+  console.log(gameStarted);
+  enemies.length = 0;
+  gameSpeed = 0;
+  waveProgress = countdownBarWidth; // Reset waveProgress to full width
+  currentWave = 1;
+  allEnemies = [...wave1Enemies]; // Reset enemies to the first wave
+  spawnedEnemies = [];
+  waveStartTime = Date.now(); // Reset the wave start time
+  gameStarted = true; // Ensure the game state is set to started
+  initializeResources();
 }
 
 function animate() {
@@ -194,12 +228,17 @@ function animate() {
     drawStartButton();
     return;
   }
-
+  if (towers.length == 0) {
+    drawGameOverScreen();
+    return;
+  }
   chooseHero();
   drawTheGrid();
   showResources();
   drawDefenders();
+  drawMessages();
   drawVillan();
+
   spawnEnemy();
   gameSpeed++;
 
@@ -220,7 +259,7 @@ function animate() {
   if (waveElapsedTime >= waveDuration + timeBetweenWaves) {
     waveProgress = countdownBarWidth;
     // Wave duration has ended, prepare for the next wave
-    updateWaveTime();
+
     waveStartTime = Date.now(); // Start the countdown for the next wave
     currentWave++;
 
@@ -240,6 +279,8 @@ function animate() {
 
   drawTower();
   drawCountdownBar();
+  drawTrees();
+
   requestAnimationFrame(animate);
 }
 
@@ -302,4 +343,4 @@ function spawnEnemy() {
 drawGameTitleAndInstructions(); // Initially draw the game title and instructions
 drawStartButton(); // Initially draw the start button
 setInterval(drawMandrake, 5000);
-export { animate };
+export { resetGame, drawGameTitleAndInstructions, drawStartButton, animate };

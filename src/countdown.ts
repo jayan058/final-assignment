@@ -1,4 +1,4 @@
-export let currentWave = 0; // Initial wave
+import { currentWave } from "./game";
 export let waveStartTime = Date.now(); // Start time of the current wave
 
 const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
@@ -16,13 +16,8 @@ export function waveCountdown(
     return;
   }
   ctx.fillText(
-    ` Seige Wave ${currentWave + 1} incoming get ready `,
+    ` Seige Wave ${currentWave} incoming get ready `,
     canvas.width / 2 - 300,
     canvas.height / 2
   );
-}
-
-export function updateWaveTime() {
-  waveStartTime = Date.now();
-  currentWave++;
 }

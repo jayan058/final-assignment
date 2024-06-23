@@ -9,10 +9,11 @@ const manDrakeDustCloud = new Image();
 manDrakeDustCloud.src = "./images/mandrake-dust-cloud.png";
 
 const gridCellWidth = 64;
+
 const gridCellHeight = 64;
 const mandrakeSize = 110; // Size of the Mandrake within the grid cell
 let gamepoints: number[] = [50, 60, 70, 80];
-let mandrakes: Mandrake[] = [];
+export let mandrakes: Mandrake[] = [];
 
 class Mandrake {
   x: number;

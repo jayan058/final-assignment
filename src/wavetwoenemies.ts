@@ -15,6 +15,7 @@ const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
 import { gameSpeed } from "./game";
 
 class Golem extends Enemy {
+  type:string;
   speed: number;
   moment: number;
   health: number;
@@ -48,6 +49,7 @@ class Golem extends Enemy {
   constructor(x: number, y: number) {
     super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
     this.speed = 0.4;
+    this.type='enemy'
     this.moment = this.speed;
     this.health = 120;
     this.pointsAwarded = this.health;
@@ -214,6 +216,7 @@ class Golem extends Enemy {
 }
 
 class FireSpirit extends Enemy {
+  type:string;
   speed: number;
   moment: number;
   health: number;
@@ -249,6 +252,7 @@ class FireSpirit extends Enemy {
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
+    this.type='enemy'
     this.pointsAwarded = this.health;
     this.frameX = 0;
     this.frameY = 0;
@@ -414,6 +418,7 @@ class FireSpirit extends Enemy {
 
 class MonsterDog extends Enemy {
   speed: number;
+  type:string;
   moment: number;
   health: number;
   pointsAwarded: number;
@@ -448,6 +453,7 @@ class MonsterDog extends Enemy {
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
+    this.type='enemy'
     this.pointsAwarded = this.health;
     this.frameX = 0;
     this.frameY = 0;

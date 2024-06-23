@@ -1,5 +1,5 @@
 import { Projectile, projectiles } from "./projectiles";
-
+import { FloatingMessage, floatingmessage } from "./floatingmessage";
 class Hero {
   x: number;
   y: number;
@@ -34,7 +34,7 @@ class Hero {
   dustCloudImage: HTMLImageElement;
   endurance: number;
   projectileImageSrc: string;
-  modulo:number;
+  modulo: number;
 
   constructor(
     imageSrc: string,
@@ -57,7 +57,7 @@ class Hero {
     dustCloudAnimationFrames: number,
     endurance: number,
     projectileImageSrc: string,
-    modulo:number
+    modulo: number
   ) {
     this.x = x;
     this.y = y;
@@ -100,7 +100,7 @@ class Hero {
     this.dustCloudImage.src = dustCloudImageSrc;
     this.endurance = endurance;
     this.projectileImageSrc = projectileImageSrc;
-    this.modulo=modulo
+    this.modulo = modulo;
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -131,7 +131,7 @@ class Hero {
 
         break;
       case "attacking":
-        if (gameSpeed %this.modulo === 0) {
+        if (gameSpeed % this.modulo === 0) {
           if (this.frameX < this.attackAnimationFrames) {
             this.frameX += 1;
           } else {
@@ -251,7 +251,8 @@ class HeroType1 extends Hero {
       2,
       4,
       20,
-      "./images/archerarrow.png",10
+      "./images/archerarrow.png",
+      10
     );
     this.shootInterval = 2300; // Time in milliseconds between shots
     this.lastShotTime = 0;
@@ -305,8 +306,8 @@ class HeroType2 extends Hero {
       3,
       4,
       20,
-      "./images/hero2fireball.png",10
-    
+      "./images/hero2fireball.png",
+      10
     );
     this.shootInterval = 800; // Time in milliseconds between shots
     this.lastShotTime = 300;
@@ -357,7 +358,8 @@ class HeroType3 extends Hero {
       2,
       4,
       20,
-      "projectileImageSrc",8
+      "projectileImageSrc",
+      8
     );
   }
   heroMovement() {
@@ -394,7 +396,8 @@ class HeroType4 extends Hero {
       3,
       4,
       5,
-      "projectileImageSrc",15
+      "projectileImageSrc",
+      15
     );
   }
   heroMovement() {
@@ -431,7 +434,8 @@ class HeroType5 extends Hero {
       3,
       4,
       10,
-      "projectileImageSrc",5
+      "projectileImageSrc",
+      5
     );
   }
 
@@ -469,7 +473,8 @@ class HeroType6 extends Hero {
       2,
       4,
       5,
-      "projectileImageSrc",5
+      "projectileImageSrc",
+      5
     );
   }
 
@@ -509,7 +514,8 @@ class HeroType7 extends Hero {
       5,
       4,
       10,
-      "./images/jinifireball.png",13
+      "./images/jinifireball.png",
+      13
     );
     this.shootInterval = 700; // Time in milliseconds between shots
     this.lastShotTime = 500;
@@ -563,7 +569,8 @@ class HeroType8 extends Hero {
       8,
       4,
       20,
-      "./images/hero8fireball.png",15
+      "./images/hero8fireball.png",
+      15
     );
     this.shootInterval = 1700; // Time in milliseconds between shots
     this.lastShotTime = 700;
@@ -751,7 +758,7 @@ function isGridOccupied(x: number, y: number): boolean {
   const gridKey = `${x},${y}`;
   return occupiedGridPositions.has(gridKey);
 }
-
+// Add event listener for canvas click
 // Add event listener for canvas click
 canvas1.addEventListener("click", (event) => {
   const rect = canvas1.getBoundingClientRect();
@@ -776,35 +783,70 @@ canvas1.addEventListener("click", (event) => {
       }
     });
   } else {
-    // Check if y is within the valid range (not in the first  row)
+    // Check if y is within the valid range (not in the first row)
     if (y >= 64 && y <= 564 && x >= 128) {
-      // Special hero types that can be placed anywhere
-      if (
-        selectedCard.heroClass === HeroType3 ||
-        selectedCard.heroClass === HeroType4 ||
-        selectedCard.heroClass === HeroType5 ||
-        selectedCard.heroClass === HeroType6 ||
-        selectedCard.heroClass == HeroType7 ||
-        selectedCard.heroClass == HeroType8
-      ) {
-        const newHero = new selectedCard.heroClass(x, y);
-        heroes.push(newHero);
-      } else if (
-        (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType1) ||
-        (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType2)
-      ) {
-        // Create a new hero using the heroClass from the selected card
-        const newHero = new selectedCard.heroClass(x, y);
-        heroes.push(newHero);
-
-        // Mark the grid position as occupied
-        const gridKey = `${x},${y}`;
-        occupiedGridPositions.add(gridKey);
+      if (selectedCard.cost > resources) {
+        floatingmessage.push(
+          new FloatingMessage(
+            "Not Enough Resources",
+            canvas1.width / 2 - 200,
+            canvas1.height / 2 + 50,
+            50,
+            1,
+            "white"
+          )
+        );
       } else {
-        console.log("Cannot drop hero on an occupied grid position.");
+        // Special hero types that can be placed anywhere
+        if (
+          selectedCard.heroClass === HeroType3 ||
+          selectedCard.heroClass === HeroType4 ||
+          selectedCard.heroClass === HeroType5 ||
+          selectedCard.heroClass === HeroType6
+        ) {
+          const newHero = new selectedCard.heroClass(x, y);
+          heroes.push(newHero);
+          resources -= selectedCard.cost;
+        } else if (
+          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType1) ||
+          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType2) ||
+          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType7) ||
+          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType8)
+        ) {
+          // Create a new hero using the heroClass from the selected card
+          const newHero = new selectedCard.heroClass(x, y);
+          heroes.push(newHero);
+
+          // Mark the grid position as occupied
+          const gridKey = `${x},${y}`;
+          occupiedGridPositions.add(gridKey);
+
+          // Deduct resources after successful placement
+          resources -= selectedCard.cost;
+        } else {
+          floatingmessage.push(
+            new FloatingMessage(
+              "Position Is Occupied",
+              canvas1.width / 2 - 200,
+              canvas1.height / 2 + 50,
+              50,
+              1,
+              "white"
+            )
+          );
+        }
       }
     } else {
-      console.log("Cannot place hero in the first or last row.");
+      floatingmessage.push(
+        new FloatingMessage(
+          "Invalid Position",
+          canvas1.width / 2 - 200,
+          canvas1.height / 2 + 50,
+          50,
+          1,
+          "white"
+        )
+      );
     }
 
     // Reset the selected card after placing the hero
@@ -916,9 +958,12 @@ setTimeout(() => {
   );
 }, 0);
 
-export let resources = 300;
+export let resources = 400;
 export let drawHeroCardNow = false;
 
+export function initializeResources() {
+  resources = 400;
+}
 export function addResources(x: number) {
   resources += x;
   audio.play();

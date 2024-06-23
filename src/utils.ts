@@ -7,6 +7,9 @@ import { enemies } from "./villans";
 import { projectiles } from "./projectiles";
 import { towers } from "./towers";
 import { projectilesfortowers } from "./towers";
+import { FloatingMessage, floatingmessage } from "./floatingmessage";
+import { addResources } from "./heroes";
+
 function showResources() {
   ctx1.fillStyle = "gold";
   ctx1.font = "20px Arial";
@@ -101,10 +104,34 @@ function handleCollision(hero: any, enemy: any) {
   }, 500);
 }
 
-export function removeEntity(array: any, entity: any) {
+export function removeEntity(array:any, entity:any) {
+  console.log(entity);
+
   const index = array.indexOf(entity);
+
   if (index > -1) {
     array.splice(index, 1);
+
+    // Check if the entity being removed is an enemy
+    if (entity.type === "enemy") {
+      // Assuming pointsAwarded is a property of the enemy object
+      const pointsAwarded = entity.pointsAwarded || 0; // Default to 0 if pointsAwarded is not defined
+
+      // Push a message to floatingmessage
+      floatingmessage.push(
+        new FloatingMessage(
+          `YUMMY!!!! Resource + ${pointsAwarded}`,
+          canvas1.width / 2 - 240,
+          canvas1.height / 2 + 50,
+          50,
+          1,
+          "white"
+        )
+      );
+
+      // Add resources based on pointsAwarded
+      addResources(pointsAwarded);
+    }
   }
 }
 
@@ -135,8 +162,9 @@ export function collisionWithProjectile() {
             // Remove the enemy from the game after another delay
             setTimeout(() => {
               removeEntity(enemies, enemy);
+              // Adjust this delay as needed for dead state duration
             }, 500); // Adjust this delay as needed for dustcloud duration
-          }, 500); // Adjust this delay as needed for dead state duration
+          }, 500);
         } else {
           // Set enemy to hurt state and reduce speed to zero
           enemy.state = "hurt";
@@ -197,8 +225,8 @@ export function checkCollisionWithProjectileFromTower() {
             // Remove the enemy from the game after another delay
             setTimeout(() => {
               removeEntity(enemies, enemy);
-            }, 500); // Adjust this delay as needed for dustcloud duration
-          }, 500); // Adjust this delay as needed for dead state duration
+            }, 500); 
+          }, 500); 
         } else {
           // Set enemy to hurt state and reduce speed to zero
           enemy.state = "hurt";
@@ -209,7 +237,7 @@ export function checkCollisionWithProjectileFromTower() {
           setTimeout(() => {
             enemy.state = "idle";
             enemy.speed = enemy.moment;
-          }, 500); // Adjust the delay as needed
+          }, 500); 
         }
       }
     }

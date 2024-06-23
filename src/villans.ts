@@ -72,10 +72,11 @@ class zombieVillager extends Enemy {
   endurance: number;
   isCollidingWithVilan: boolean;
   isCollidingWithHero: boolean;
+  type: string;
 
   constructor(x: number, y: number) {
     super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
-    this.speed = 0.8;
+    this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
     this.pointsAwarded = this.health;
@@ -113,6 +114,7 @@ class zombieVillager extends Enemy {
     this.endurance = 20;
     this.isCollidingWithVilan = false;
     this.isCollidingWithHero = false;
+    this.type = "enemy";
   }
 
   enemyMovement() {
@@ -242,6 +244,7 @@ class zombieVillager extends Enemy {
 }
 
 class BattleTurtle extends Enemy {
+  type: string;
   speed: number;
   moment: number;
   health: number;
@@ -288,6 +291,7 @@ class BattleTurtle extends Enemy {
     this.eachHeight = 72;
     this.firstFrame = 0;
     this.lastFrame = 11;
+    this.type = "enemy";
     this.enemytype = enemytypes[1];
     // Set the specific image/type for EnemyType2
     this.attackAnimationFrames = 3;
@@ -474,6 +478,7 @@ class BattleTurtle extends Enemy {
 }
 
 class Centipide extends Enemy {
+  type: string;
   speed: number;
   moment: number;
   health: number;
@@ -505,7 +510,8 @@ class Centipide extends Enemy {
   isCollidingWithHero: boolean;
 
   constructor(x: number, y: number) {
-    super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
+    super(x, y, gridCellWidth, gridCellHeight);
+    this.type = "enemy"; // Adjust width and height if needed
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
@@ -673,6 +679,7 @@ class Centipide extends Enemy {
 }
 
 class FallenAngel extends Enemy {
+  type: string;
   speed: number;
   moment: number;
   health: number;
@@ -704,7 +711,8 @@ class FallenAngel extends Enemy {
   isCollidingWithHero: boolean;
 
   constructor(x: number, y: number) {
-    super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
+    super(x, y, gridCellWidth, gridCellHeight);
+    this.type = "enemy"; // Adjust width and height if needed
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;

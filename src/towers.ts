@@ -2,7 +2,6 @@ import { gameSpeed } from "./game";
 import { ProjectileForTowers } from "./projectilefortower";
 import { removeEntity } from "./utils";
 import { enemies, Enemy } from "./villans";
-
 const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
 const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
 export let projectilesfortowers: ProjectileForTowers[] = [];
@@ -11,7 +10,7 @@ let nearestEnemy: Enemy | null = null;
 const HEALTH_BAR_GREEN = "#00FF00";
 const HEALTH_BAR_RED = "#FF0000";
 
-class Tower {
+export class Tower {
   height: number;
   width: number;
   x: number;
@@ -63,7 +62,7 @@ class Tower {
     this.collisionShootInterval = 100; // Faster shoot interval during collision
     this.shootInterval = this.defaultShootInterval;
     this.isColliding = false;
-    this.maxHealth = 400; // Adjust as needed
+    this.maxHealth = 500;
     this.health = this.maxHealth;
     this.dustCloudSprite = new Image();
     this.dustCloudSprite.src = "./images/mandrake-dust-cloud.png";
@@ -147,7 +146,7 @@ class Tower {
     enemies.forEach((enemy: any) => {
       if (enemy.y >= targetY && enemy.y <= targetY + 64) {
         const dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
-        if (dist < minDist && dist <= 64 * 3) {
+        if (dist < minDist && dist <= 64 * 10) {
           // Check for proximity within 3 cells
           minDist = dist;
           nearestEnemy = enemy;
@@ -203,6 +202,7 @@ class Tower {
 
       setTimeout(() => {
         removeEntity(towers, this);
+        console.log("Hello");
       }, 1000);
     }
   }
@@ -248,8 +248,9 @@ export const towers: Tower[] = [
 
 export function drawTower() {
   Tower.updateShooter();
+
   towers.forEach((tower) => {
-    tower.checkCollisionWithEnemies();
     tower.draw();
+    tower.checkCollisionWithEnemies();
   });
 }
