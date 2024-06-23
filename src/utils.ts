@@ -120,8 +120,8 @@ export function removeEntity(array:any, entity:any) {
       // Push a message to floatingmessage
       floatingmessage.push(
         new FloatingMessage(
-          `YUMMY!!!! Resource + ${pointsAwarded}`,
-          canvas1.width / 2 - 240,
+          `SWEET JOB!!! Resource + ${pointsAwarded}`,
+          canvas1.width / 2 - 280,
           canvas1.height / 2 + 50,
           50,
           1,

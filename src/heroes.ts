@@ -966,7 +966,7 @@ export function initializeResources() {
 }
 export function addResources(x: number) {
   resources += x;
-  audio.play();
+
 }
 
 let mouseX: number | null = null;

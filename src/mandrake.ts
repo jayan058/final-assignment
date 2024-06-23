@@ -3,6 +3,7 @@ const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
 
 import { gameSpeed } from "./game";
 import { addResources } from "./heroes";
+import { FloatingMessage, floatingmessage } from "./floatingmessage";
 const mandrakeImage = new Image();
 mandrakeImage.src = "./images/mandrake.png";
 const manDrakeDustCloud = new Image();
@@ -84,6 +85,19 @@ class Mandrake {
       mouseY <= this.y + gridCellHeight * 1.3;
 
     if (hovered) {
+      floatingmessage.push(
+        new FloatingMessage(
+          `YUMMY!!!! MANDRAKE Resource + ${mandrake.gamePoint}`,
+          canvas1.width / 2 - 380,
+          canvas1.height / 2 + 50,
+          50,
+          1,
+          "white"
+        )
+      );
+
+      // Add resources based on pointsAwarded
+
       addResources(mandrake.gamePoint);
     }
 
