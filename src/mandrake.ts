@@ -69,12 +69,12 @@ class Mandrake {
     );
 
     ctx.fillStyle = "gold";
-    ctx.font = "10px Arial";
+    ctx1.font = "15px Audiowide";
     ctx.fillText(this.gamePoint.toString(), this.x + 25, this.y);
   }
 
   isExpired() {
-    return Date.now() - this.creationTime > 5500; // 10 seconds
+    return Date.now() - this.creationTime > 5500;
   }
 
   isHovered(mouseX: number, mouseY: number, mandrake: any) {
@@ -87,8 +87,8 @@ class Mandrake {
     if (hovered) {
       floatingmessage.push(
         new FloatingMessage(
-          `YUMMY!!!! MANDRAKE Resource + ${mandrake.gamePoint}`,
-          canvas1.width / 2 - 380,
+          `+ ${mandrake.gamePoint}`,
+          canvas1.width / 2,
           canvas1.height / 2 + 50,
           50,
           1,
@@ -99,6 +99,10 @@ class Mandrake {
       // Add resources based on pointsAwarded
 
       addResources(mandrake.gamePoint);
+      let pointsAudio = new Audio();
+      pointsAudio.src = "./sound/resourceincrease.mp3";
+      pointsAudio.play();
+      pointsAudio.volume = 0.9;
     }
 
     return hovered;

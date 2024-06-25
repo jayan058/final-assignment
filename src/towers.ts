@@ -4,6 +4,7 @@ import { removeEntity } from "./utils";
 import { enemies, Enemy } from "./villans";
 const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
 const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
+import { villanprojectiles } from "./villans";
 export let projectilesfortowers: ProjectileForTowers[] = [];
 let nearestEnemy: Enemy | null = null;
 // Health bar colors
@@ -120,9 +121,6 @@ export class Tower {
       projectilesfortowers.push(projectile);
       this.lastShootTime = currentTime;
     }
-    console.log(
-      `Tower at (${this.x}, ${this.y}) shoot interval: ${this.shootInterval}`
-    );
   }
 
   static updateShooter() {
@@ -133,7 +131,6 @@ export class Tower {
     ) {
       Tower.shooterIndex = (Tower.shooterIndex + 1) % towers.length;
       Tower.lastShooterChangeTime = currentTime;
-      console.log(`Shooter changed to tower index: ${Tower.shooterIndex}`);
     }
   }
 
@@ -146,8 +143,8 @@ export class Tower {
     enemies.forEach((enemy: any) => {
       if (enemy.y >= targetY && enemy.y <= targetY + 64) {
         const dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
-        if (dist < minDist && dist <= 64 * 10) {
-          // Check for proximity within 3 cells
+        if (dist < minDist && dist <= 64 * 11) {
+          // Check for proximity within 64*11 cells
           minDist = dist;
           nearestEnemy = enemy;
         }
@@ -163,7 +160,6 @@ export class Tower {
     const healthBarX = this.x;
     const healthBarY = this.y - healthBarHeight + 4; // Position above the tower
 
-    // Draw background (green) health bar
     ctx1.fillStyle = HEALTH_BAR_RED;
     ctx1.fillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
 
@@ -222,7 +218,7 @@ export class Tower {
         this.isColliding = true;
 
         // Decrease health upon collision
-        this.health -= 10; // Adjust the health decrease amount as needed
+        this.health -= 10; // Adjust the health decrease amount
         this.shootInterval = this.collisionShootInterval; // Change shoot interval during collision
         break;
       }
@@ -232,8 +228,33 @@ export class Tower {
       this.shootInterval = this.defaultShootInterval; // Return to default shoot interval when not colliding
     }
 
+    // Check collision with villain projectiles
+    this.checkCollisionWithVillainProjectiles();
+  }
+
+  checkCollisionWithVillainProjectiles() {
+    for (let projectile of villanprojectiles) {
+      if (
+        this.x < projectile.x + projectile.width &&
+        this.x + this.width > projectile.x &&
+        this.y < projectile.y + projectile.height &&
+        this.y + this.height > projectile.y
+      ) {
+        // Decrease health upon collision with a projectile
+        this.health -= 5;
+        this.shootInterval = this.collisionShootInterval; // Change shoot interval during collision
+        // Remove the projectile after collision
+        removeEntity(villanprojectiles, projectile);
+        break;
+      }
+    }
+
+    if (!this.isColliding) {
+      this.shootInterval = this.defaultShootInterval; // Return to default shoot interval when not colliding
+    }
+
     console.log(
-      `Tower at (${this.x}, ${this.y}) is colliding: ${this.isColliding}, health: ${this.health}`
+      `Tower at (${this.x}, ${this.y}) checked for collision with projectiles, health: ${this.health}`
     );
   }
 }

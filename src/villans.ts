@@ -1,6 +1,5 @@
 import { gridCellHeight, gridCellWidth, gameSpeed } from "./game";
 import { Projectile } from "./projectiles";
-
 const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
 const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
 export let villanprojectiles: Projectile[] = [];
@@ -9,7 +8,7 @@ let enemytypes: any = [];
 export let enemies: any = [];
 
 const enemy1 = new Image();
-enemy1.src = "./images/enemy1.png";
+enemy1.src = "./images/firevizardattack.png";
 enemytypes.push(enemy1);
 const enemy2 = new Image();
 enemy2.src = "./images/battleturtleattack.png";
@@ -17,11 +16,11 @@ enemy2.src = "./images/battleturtleattack.png";
 enemytypes.push(enemy2);
 
 const enemy3 = new Image();
-enemy3.src = "./images/enemy3.png";
+enemy3.src = "./images/tengurun.png";
 enemytypes.push(enemy3);
 
 const enemy4 = new Image();
-enemy4.src = "./images/centipidewalk.png";
+enemy4.src = "./images/mazerun.png";
 enemytypes.push(enemy4);
 
 // Define Villain class
@@ -73,30 +72,33 @@ class zombieVillager extends Enemy {
   isCollidingWithVilan: boolean;
   isCollidingWithHero: boolean;
   type: string;
+  projectileImageSrc: string;
+  shootInterval: number;
+  lastShotTime: number;
 
   constructor(x: number, y: number) {
-    super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
+    super(x, y, gridCellWidth, gridCellHeight);
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
     this.pointsAwarded = this.health;
     this.frameX = 0;
     this.frameY = 0;
-    this.eachWidth = 900;
-    this.eachHeight = 900;
+    this.eachWidth = 128;
+    this.eachHeight = 128;
     this.firstFrame = 1;
-    this.lastFrame = 11;
+    this.lastFrame = 15;
     this.enemytype = enemytypes[0];
-    // Set the specific image/type for EnemyType2
-    this.attackAnimationFrames = 11;
-    this.hurtAnimationFrames = 11;
-    this.deathAnimationFrames = 14;
+
+    this.attackAnimationFrames = 13;
+    this.hurtAnimationFrames = 2;
+    this.deathAnimationFrames = 5;
     this.dustCloudAnimationFrames = 4;
 
     // Load additional images
-    this.attackImageSrc = "./images/zomievillagerattack.png";
-    this.hurtImageSrc = "./images/zomievillagerhurt.png";
-    this.deathImageSrc = "./images/zomievillagerdeath.png";
+    this.attackImageSrc = "./images/vizardattack.png";
+    this.hurtImageSrc = "./images/vizardhurt.png";
+    this.deathImageSrc = "./images/vizarddead.png";
     this.dustCloudImageSrc = "./images/mandrake-dust-cloud.png";
 
     this.attackImage = new Image();
@@ -115,12 +117,41 @@ class zombieVillager extends Enemy {
     this.isCollidingWithVilan = false;
     this.isCollidingWithHero = false;
     this.type = "enemy";
+    this.shootInterval = 1300;
+    this.lastShotTime = 600;
+
+    this.projectileImageSrc = "./images/fireballattack.png";
+  }
+
+  shoot() {
+    const projectile = new Projectile(
+      this.x + this.width - 150,
+      this.y,
+      -3,
+      this.projectileImageSrc,
+      "fireball",
+      64,
+      64,
+      0,
+      23,
+      128,
+      128
+    );
+    villanprojectiles.push(projectile);
   }
 
   enemyMovement() {
+    const currentTime = Date.now();
+    if (currentTime - this.lastShotTime >= this.shootInterval) {
+      console.log("Hello");
+      console.log(this.shootInterval);
+
+      this.shoot();
+      this.lastShotTime = currentTime;
+    }
+
     this.x = this.x - this.speed;
     if (gameSpeed % 5 === 0) {
-      // Update frameX to flap wings
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
       } else {
@@ -131,11 +162,11 @@ class zombieVillager extends Enemy {
 
   draw() {
     ctx1.fillStyle = "gold";
-    ctx1.font = "10px Arial";
-    ctx1.fillText(this.health.toString(), this.x + 25, this.y + 10);
+    ctx1.font = "8px Audiowide";
+    ctx1.fillText(this.health.toString(), this.x + 20, this.y);
     switch (this.state) {
       case "idle":
-        if (gameSpeed % 17 === 0) {
+        if (gameSpeed % 10000 === 0) {
           if (this.frameX < this.lastFrame) {
             this.frameX += 1;
           } else {
@@ -148,10 +179,10 @@ class zombieVillager extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
@@ -169,10 +200,10 @@ class zombieVillager extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
@@ -190,10 +221,10 @@ class zombieVillager extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
@@ -211,10 +242,10 @@ class zombieVillager extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
@@ -232,10 +263,10 @@ class zombieVillager extends Enemy {
           0,
           200,
           179,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
@@ -280,7 +311,7 @@ class BattleTurtle extends Enemy {
   projectileImageSrc: string;
 
   constructor(x: number, y: number) {
-    super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
+    super(x, y, gridCellWidth, gridCellHeight);
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
@@ -293,7 +324,7 @@ class BattleTurtle extends Enemy {
     this.lastFrame = 11;
     this.type = "enemy";
     this.enemytype = enemytypes[1];
-    // Set the specific image/type for EnemyType2
+
     this.attackAnimationFrames = 3;
     this.hurtAnimationFrames = 1;
     this.deathAnimationFrames = 3;
@@ -332,12 +363,12 @@ class BattleTurtle extends Enemy {
       -3,
       this.projectileImageSrc,
       "fireball",
-      128,
-      128,
+      9,
+      10,
       0,
       0,
-      128,
-      128
+      9,
+      10
     );
     villanprojectiles.push(projectile);
   }
@@ -354,7 +385,6 @@ class BattleTurtle extends Enemy {
 
     this.x = this.x - this.speed;
     if (gameSpeed % 5 === 0) {
-      // Update frameX to flap wings
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
       } else {
@@ -365,7 +395,7 @@ class BattleTurtle extends Enemy {
 
   draw() {
     ctx1.fillStyle = "gold";
-    ctx1.font = "10px Arial";
+    ctx1.font = "8px Audiowide";
     ctx1.fillText(this.health.toString(), this.x + 25, this.y + 10);
     switch (this.state) {
       case "idle":
@@ -508,31 +538,34 @@ class Centipide extends Enemy {
   endurance: number;
   isCollidingWithVilan: boolean;
   isCollidingWithHero: boolean;
+  projectileImageSrc: string;
+  shootInterval: number;
+  lastShotTime: number;
 
   constructor(x: number, y: number) {
     super(x, y, gridCellWidth, gridCellHeight);
-    this.type = "enemy"; // Adjust width and height if needed
+    this.type = "enemy";
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
     this.pointsAwarded = this.health;
     this.frameX = 0;
     this.frameY = 0;
-    this.eachWidth = 72;
-    this.eachHeight = 72;
+    this.eachWidth = 128;
+    this.eachHeight = 128;
     this.firstFrame = 0;
-    this.lastFrame = 3;
+    this.lastFrame = 14;
     this.enemytype = enemytypes[3];
-    // Set the specific image/type for EnemyType2
-    this.attackAnimationFrames = 15;
-    this.hurtAnimationFrames = 1;
-    this.deathAnimationFrames = 3;
+
+    this.attackAnimationFrames = 3;
+    this.hurtAnimationFrames = 2;
+    this.deathAnimationFrames = 4;
     this.dustCloudAnimationFrames = 4;
 
     // Load additional images
-    this.attackImageSrc = "./images/centipideattack.png";
-    this.hurtImageSrc = "./images/centipidehurt.png";
-    this.deathImageSrc = "./images/centipidedeath.png";
+    this.attackImageSrc = "./images/mageattack.png";
+    this.hurtImageSrc = "./images/magehurt.png";
+    this.deathImageSrc = "./images/magedead.png";
     this.dustCloudImageSrc = "./images/mandrake-dust-cloud.png";
 
     this.attackImage = new Image();
@@ -550,12 +583,41 @@ class Centipide extends Enemy {
     this.endurance = 20;
     this.isCollidingWithVilan = false;
     this.isCollidingWithHero = false;
+    this.shootInterval = 1200;
+    this.lastShotTime = 0;
+
+    this.projectileImageSrc = "./images/magefireball.png";
+  }
+
+  shoot() {
+    const projectile = new Projectile(
+      this.x + this.width - 100,
+      this.y,
+      -3,
+      this.projectileImageSrc,
+      "fireball",
+      64,
+      64,
+      0,
+      8,
+      64,
+      64
+    );
+    villanprojectiles.push(projectile);
   }
 
   enemyMovement() {
+    const currentTime = Date.now();
+    if (currentTime - this.lastShotTime >= this.shootInterval) {
+      console.log("Hello");
+      console.log(this.shootInterval);
+
+      this.shoot();
+      this.lastShotTime = currentTime;
+    }
+
     this.x = this.x - this.speed;
     if (gameSpeed % 5 === 0) {
-      // Update frameX to flap wings
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
       } else {
@@ -566,11 +628,11 @@ class Centipide extends Enemy {
 
   draw() {
     ctx1.fillStyle = "gold";
-    ctx1.font = "10px Arial";
-    ctx1.fillText(this.health.toString(), this.x + 25, this.y + 10);
+    ctx1.font = "8px Audiowide";
+    ctx1.fillText(this.health.toString(), this.x + 5, this.y);
     switch (this.state) {
       case "idle":
-        if (gameSpeed % 100 === 0) {
+        if (gameSpeed % 1000 === 0) {
           if (this.frameX < this.lastFrame) {
             this.frameX += 1;
           } else {
@@ -583,15 +645,15 @@ class Centipide extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y - 30,
-          this.width + 20,
-          this.height + 20
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
       case "attacking":
-        if (gameSpeed % 500 === 0) {
+        if (gameSpeed % 5 === 0) {
           if (this.frameX < this.attackAnimationFrames) {
             this.frameX += 1;
           } else {
@@ -604,15 +666,15 @@ class Centipide extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y - 30,
-          this.width + 20,
-          this.height + 20
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
       case "hurt":
-        if (gameSpeed % 8 === 0) {
+        if (gameSpeed % 3 === 0) {
           if (this.frameX < this.hurtAnimationFrames) {
             this.frameX += 1;
           } else {
@@ -625,10 +687,10 @@ class Centipide extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y - 30,
-          this.width + 20,
-          this.height + 20
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
@@ -646,10 +708,10 @@ class Centipide extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y - 30,
-          this.width + 20,
-          this.height + 20
+          this.x - 50,
+          this.y - 40,
+          this.width + 50,
+          this.height + 30
         );
 
         break;
@@ -712,28 +774,28 @@ class FallenAngel extends Enemy {
 
   constructor(x: number, y: number) {
     super(x, y, gridCellWidth, gridCellHeight);
-    this.type = "enemy"; // Adjust width and height if needed
+    this.type = "enemy";
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
     this.pointsAwarded = this.health;
     this.frameX = 0;
     this.frameY = 0;
-    this.eachWidth = 900;
-    this.eachHeight = 900;
+    this.eachWidth = 128;
+    this.eachHeight = 128;
     this.firstFrame = 0;
-    this.lastFrame = 11;
+    this.lastFrame = 22;
     this.enemytype = enemytypes[2];
-    // Set the specific image/type for EnemyType2
-    this.attackAnimationFrames = 11;
-    this.hurtAnimationFrames = 11;
-    this.deathAnimationFrames = 14;
+
+    this.attackAnimationFrames = 12;
+    this.hurtAnimationFrames = 2;
+    this.deathAnimationFrames = 6;
     this.dustCloudAnimationFrames = 4;
 
     // Load additional images
-    this.attackImageSrc = "./images/fallenangelattack.png";
-    this.hurtImageSrc = "./images/fallenangelhurt.png";
-    this.deathImageSrc = "./images/fallenangeldeath.png";
+    this.attackImageSrc = "./images/tenguattack.png";
+    this.hurtImageSrc = "./images/tenguhurt.png";
+    this.deathImageSrc = "./images/tengudead.png";
     this.dustCloudImageSrc = "./images/mandrake-dust-cloud.png";
 
     this.attackImage = new Image();
@@ -756,7 +818,6 @@ class FallenAngel extends Enemy {
   enemyMovement() {
     this.x = this.x - this.speed;
     if (gameSpeed % 5 === 0) {
-      // Update frameX to flap wings
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
       } else {
@@ -767,8 +828,8 @@ class FallenAngel extends Enemy {
 
   draw() {
     ctx1.fillStyle = "gold";
-    ctx1.font = "10px Arial";
-    ctx1.fillText(this.health.toString(), this.x + 25, this.y + 10);
+    ctx1.font = "8px Audiowide";
+    ctx1.fillText(this.health.toString(), this.x, this.y);
     switch (this.state) {
       case "idle":
         if (gameSpeed % 17 === 0) {
@@ -784,15 +845,15 @@ class FallenAngel extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 20,
+          this.y - 20,
+          this.width + 10,
+          this.height + 10
         );
 
         break;
       case "attacking":
-        if (gameSpeed % 10 === 0) {
+        if (gameSpeed % 5 === 0) {
           if (this.frameX < this.attackAnimationFrames) {
             this.frameX += 1;
           } else {
@@ -805,15 +866,15 @@ class FallenAngel extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 20,
+          this.y - 20,
+          this.width + 10,
+          this.height + 10
         );
 
         break;
       case "hurt":
-        if (gameSpeed % 8 === 0) {
+        if (gameSpeed % 5 === 0) {
           if (this.frameX < this.hurtAnimationFrames) {
             this.frameX += 1;
           } else {
@@ -826,10 +887,10 @@ class FallenAngel extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 20,
+          this.y - 20,
+          this.width + 10,
+          this.height + 10
         );
 
         break;
@@ -847,10 +908,10 @@ class FallenAngel extends Enemy {
           0,
           this.eachWidth,
           this.eachHeight,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 20,
+          this.y - 20,
+          this.width + 10,
+          this.height + 10
         );
 
         break;
@@ -868,10 +929,10 @@ class FallenAngel extends Enemy {
           0,
           200,
           179,
-          this.x,
-          this.y,
-          this.width,
-          this.height
+          this.x - 20,
+          this.y - 20,
+          this.width + 10,
+          this.height + 10
         );
 
         break;

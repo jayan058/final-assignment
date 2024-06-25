@@ -72,13 +72,13 @@ export class Projectile {
   update(projectile: any) {
     // Set the fired position when the projectile is first created
 
-    // Check if the projectile has traveled 30 pixels from the fired position
-    if (Math.abs(this.x - this.firedPosition) >= 64 * 3.5 ) {
+    // Check if the projectile has traveled 64*3.5 pixels from the fired position
+    if (Math.abs(this.x - this.firedPosition) >= 64 * 3.5) {
       removeEntity(projectiles, projectile);
-      removeEntity(villanprojectiles,projectile)
+      removeEntity(villanprojectiles, projectile);
     } else {
       console.log(this.speed);
-      
+
       this.x += this.speed;
     }
   }

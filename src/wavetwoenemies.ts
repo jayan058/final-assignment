@@ -15,7 +15,7 @@ const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
 import { gameSpeed } from "./game";
 
 class Golem extends Enemy {
-  type:string;
+  type: string;
   speed: number;
   moment: number;
   health: number;
@@ -47,9 +47,9 @@ class Golem extends Enemy {
   isCollidingWithHero: boolean;
 
   constructor(x: number, y: number) {
-    super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
+    super(x, y, gridCellWidth, gridCellHeight);
     this.speed = 0.4;
-    this.type='enemy'
+    this.type = "enemy";
     this.moment = this.speed;
     this.health = 120;
     this.pointsAwarded = this.health;
@@ -60,7 +60,7 @@ class Golem extends Enemy {
     this.firstFrame = 0;
     this.lastFrame = 11;
     this.enemytype = enemytypes[0];
-    // Set the specific image/type for EnemyType2
+
     this.attackAnimationFrames = 3;
     this.hurtAnimationFrames = 1;
     this.deathAnimationFrames = 4;
@@ -92,7 +92,6 @@ class Golem extends Enemy {
   enemyMovement() {
     this.x = this.x - this.speed;
     if (gameSpeed % 5 === 0) {
-      // Update frameX to flap wings
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
       } else {
@@ -216,7 +215,7 @@ class Golem extends Enemy {
 }
 
 class FireSpirit extends Enemy {
-  type:string;
+  type: string;
   speed: number;
   moment: number;
   health: number;
@@ -248,11 +247,11 @@ class FireSpirit extends Enemy {
   isCollidingWithHero: boolean;
 
   constructor(x: number, y: number) {
-    super(x, y, gridCellWidth, gridCellHeight); // Adjust width and height if needed
+    super(x, y, gridCellWidth, gridCellHeight);
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
-    this.type='enemy'
+    this.type = "enemy";
     this.pointsAwarded = this.health;
     this.frameX = 0;
     this.frameY = 0;
@@ -261,7 +260,7 @@ class FireSpirit extends Enemy {
     this.firstFrame = 0;
     this.lastFrame = 20;
     this.enemytype = enemytypes[1];
-    // Set the specific image/type for EnemyType2
+
     this.attackAnimationFrames = 23;
     this.hurtAnimationFrames = 2;
     this.deathAnimationFrames = 4;
@@ -293,7 +292,6 @@ class FireSpirit extends Enemy {
   enemyMovement() {
     this.x = this.x - this.speed;
     if (gameSpeed % 5 === 0) {
-      // Update frameX to flap wings
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
       } else {
@@ -418,7 +416,7 @@ class FireSpirit extends Enemy {
 
 class MonsterDog extends Enemy {
   speed: number;
-  type:string;
+  type: string;
   moment: number;
   health: number;
   pointsAwarded: number;
@@ -453,7 +451,7 @@ class MonsterDog extends Enemy {
     this.speed = 0.4;
     this.moment = this.speed;
     this.health = 120;
-    this.type='enemy'
+    this.type = "enemy";
     this.pointsAwarded = this.health;
     this.frameX = 0;
     this.frameY = 0;
@@ -462,7 +460,7 @@ class MonsterDog extends Enemy {
     this.firstFrame = 0;
     this.lastFrame = 5;
     this.enemytype = enemytypes[2];
-    // Set the specific image/type for EnemyType2
+
     this.attackAnimationFrames = 11;
     this.hurtAnimationFrames = 3;
     this.deathAnimationFrames = 5;
@@ -494,7 +492,6 @@ class MonsterDog extends Enemy {
   enemyMovement() {
     this.x = this.x - this.speed;
     if (gameSpeed % 5 === 0) {
-      // Update frameX to flap wings
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
       } else {

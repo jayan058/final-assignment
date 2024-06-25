@@ -38,7 +38,7 @@ export class FloatingMessage {
   draw() {
     ctx1.globalAlpha = this.opacity;
     ctx1.fillStyle = this.color;
-    ctx1.font = `${this.size}px Georgia`;
+    ctx1.font = `${this.size}px Audiowide`;
     ctx1.fillText(this.value.toString(), this.x, this.y);
     ctx1.globalAlpha = 1;
   }

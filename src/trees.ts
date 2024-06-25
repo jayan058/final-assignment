@@ -104,13 +104,9 @@ export class PineTree extends Tree {
 
 export function drawTrees() {
   trees.forEach((tree) => {
-    console.log("Hey");
-
     tree.draw();
   });
 }
-
-trees.push(new OakTree(770, 0));
 
 trees.push(new PineTree(1200, 79));
 

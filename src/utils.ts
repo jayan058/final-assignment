@@ -1,6 +1,6 @@
 const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
 const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
-
+import { villanprojectiles } from "./villans";
 import { occupiedGridPositions } from "./heroes";
 import { resources, heroes } from "./heroes";
 import { enemies } from "./villans";
@@ -9,11 +9,12 @@ import { towers } from "./towers";
 import { projectilesfortowers } from "./towers";
 import { FloatingMessage, floatingmessage } from "./floatingmessage";
 import { addResources } from "./heroes";
+import { powerups } from "./powerup";
 
 function showResources() {
-  ctx1.fillStyle = "gold";
-  ctx1.font = "20px Arial";
-  ctx1.fillText("Coins: " + resources, 0, 50);
+  ctx1.fillStyle = "white";
+  ctx1.font = "17px Audiowide";
+  ctx1.fillText("Coins: " + resources, 0, 30);
 }
 
 export function checkCollisions() {
@@ -64,7 +65,7 @@ function handleCollision(hero: any, enemy: any) {
 
           // Remove the hero's position from occupiedGridPositions
           occupiedGridPositions.delete(positionString);
-        }, 1500); // Adjust as needed
+        }, 1500);
       } else {
         hero.state = "idle";
       }
@@ -78,7 +79,7 @@ function handleCollision(hero: any, enemy: any) {
         setTimeout(() => {
           hero.speed = hero.moment;
           removeEntity(enemies, enemy);
-        }, 800); // Adjust as needed
+        }, 800);
       } else {
         enemy.state = "idle";
       }
@@ -104,7 +105,7 @@ function handleCollision(hero: any, enemy: any) {
   }, 500);
 }
 
-export function removeEntity(array:any, entity:any) {
+export function removeEntity(array: any, entity: any) {
   console.log(entity);
 
   const index = array.indexOf(entity);
@@ -114,21 +115,23 @@ export function removeEntity(array:any, entity:any) {
 
     // Check if the entity being removed is an enemy
     if (entity.type === "enemy") {
-      // Assuming pointsAwarded is a property of the enemy object
-      const pointsAwarded = entity.pointsAwarded || 0; // Default to 0 if pointsAwarded is not defined
+      const pointsAwarded = entity.pointsAwarded || 0;
 
       // Push a message to floatingmessage
       floatingmessage.push(
         new FloatingMessage(
-          `SWEET JOB!!! Resource + ${pointsAwarded}`,
-          canvas1.width / 2 - 280,
+          `+ ${pointsAwarded}`,
+          canvas1.width / 2 - 10,
           canvas1.height / 2 + 50,
           50,
           1,
           "white"
         )
       );
-
+      let pointsAudio = new Audio();
+      pointsAudio.src = "./sound/resourceincrease.mp3";
+      pointsAudio.play();
+      pointsAudio.volume = 0.9;
       // Add resources based on pointsAwarded
       addResources(pointsAwarded);
     }
@@ -162,8 +165,7 @@ export function collisionWithProjectile() {
             // Remove the enemy from the game after another delay
             setTimeout(() => {
               removeEntity(enemies, enemy);
-              // Adjust this delay as needed for dead state duration
-            }, 500); // Adjust this delay as needed for dustcloud duration
+            }, 500);
           }, 500);
         } else {
           // Set enemy to hurt state and reduce speed to zero
@@ -171,11 +173,51 @@ export function collisionWithProjectile() {
           // Save the original speed
           enemy.speed = 0;
 
-          // Restore enemy state and speed after 1 second (1000 milliseconds)
           setTimeout(() => {
             enemy.state = "idle";
             enemy.speed = enemy.moment;
-          }, 500); // Adjust the delay as needed
+          }, 500);
+        }
+      }
+    }
+  }
+}
+
+export function collisionWithRocket() {
+  for (let enemy of enemies) {
+    for (let powerup of powerups) {
+      if (
+        powerup.x < enemy.x + enemy.width &&
+        powerup.x + powerup.width > enemy.x &&
+        powerup.y < enemy.y + enemy.height &&
+        powerup.y + powerup.height > enemy.y
+      ) {
+        if (powerup.type === "PowerupType1") {
+          // Set enemy health to zero, but do not remove the powerup
+          enemy.health = 0;
+        } else if (powerup.type === "PowerupType2") {
+          // Set enemy health to zero and remove the powerup
+          enemy.health = 0;
+          removeEntity(powerups, powerup);
+        } else if (powerup.type === "PowerupType3") {
+          powerup.x += enemy.width;
+          enemy.health -= 20;
+        }
+
+        if (enemy.health <= 0) {
+          // Set enemy state to dead
+          enemy.state = "dead";
+          enemy.speed = 0;
+
+          // After some time, change state to dustcloud
+          setTimeout(() => {
+            enemy.state = "dustcloud";
+
+            // Remove the enemy from the game after another delay
+            setTimeout(() => {
+              removeEntity(enemies, enemy);
+            }, 602);
+          }, 590);
         }
       }
     }
@@ -225,19 +267,67 @@ export function checkCollisionWithProjectileFromTower() {
             // Remove the enemy from the game after another delay
             setTimeout(() => {
               removeEntity(enemies, enemy);
-            }, 500); 
-          }, 500); 
+            }, 500);
+          }, 500);
         } else {
           // Set enemy to hurt state and reduce speed to zero
           enemy.state = "hurt";
           // Save the original speed
           enemy.speed = 0;
 
-          // Restore enemy state and speed after 1 second (1000 milliseconds)
           setTimeout(() => {
             enemy.state = "idle";
             enemy.speed = enemy.moment;
-          }, 500); 
+          }, 500);
+        }
+      }
+    }
+  }
+}
+
+export function collisionWithVillanProjectile() {
+  for (let villanprojectile of villanprojectiles) {
+    for (let hero of heroes) {
+      if (
+        hero.x < villanprojectile.x + villanprojectile.width &&
+        hero.x + hero.width > villanprojectile.x &&
+        hero.y < villanprojectile.y + villanprojectile.height &&
+        hero.y + hero.height > villanprojectile.y
+      ) {
+        // Remove the projectile on collision
+        removeEntity(villanprojectiles, villanprojectile);
+
+        // Reduce enemy health
+        hero.health -= hero.endurance;
+
+        if (hero.health <= 0) {
+          // Set enemy state to dead
+          hero.state = "dead";
+          hero.speed = 0;
+
+          // After some time, change state to dustcloud
+          setTimeout(() => {
+            hero.state = "dustcloud";
+
+            // Remove the enemy from the game after another delay
+            setTimeout(() => {
+              removeEntity(heroes, hero);
+              const positionString = `${hero.x},${hero.y}`;
+
+              // Remove the hero's position from occupiedGridPositions
+              occupiedGridPositions.delete(positionString);
+            }, 500);
+          }, 500);
+        } else {
+          // Set enemy to hurt state and reduce speed to zero
+          hero.state = "hurt";
+          // Save the original speed
+          hero.speed = 0;
+
+          setTimeout(() => {
+            hero.state = "idle";
+            hero.speed = hero.moment;
+          }, 500);
         }
       }
     }

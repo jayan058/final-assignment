@@ -1,5 +1,6 @@
 import { Projectile, projectiles } from "./projectiles";
 import { FloatingMessage, floatingmessage } from "./floatingmessage";
+
 class Hero {
   x: number;
   y: number;
@@ -20,14 +21,12 @@ class Hero {
   deathAnimationFrames: number;
   dustCloudAnimationFrames: number;
   moment: number;
-  // Image sources
 
   attackImageSrc: string;
   hurtImageSrc: string;
   deathImageSrc: string;
   dustCloudImageSrc: string;
 
-  // Image elements
   attackImage: HTMLImageElement;
   hurtImage: HTMLImageElement;
   deathImage: HTMLImageElement;
@@ -81,7 +80,6 @@ class Hero {
     this.deathAnimationFrames = deathAnimationFrames;
     this.dustCloudAnimationFrames = dustCloudAnimationFrames;
 
-    // Load additional images
     this.attackImageSrc = attackImageSrc;
     this.hurtImageSrc = hurtImageSrc;
     this.deathImageSrc = deathImageSrc;
@@ -105,7 +103,7 @@ class Hero {
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "gold";
-    ctx.font = "10px Arial";
+    ctx.font = "10px Audiowide";
     ctx.fillText(`${this.health}`, this.x + 18, this.y);
 
     switch (this.state) {
@@ -364,7 +362,7 @@ class HeroType3 extends Hero {
   }
   heroMovement() {
     this.x = this.x + this.speed;
-    // Other movement logic as before
+
     if (gameSpeed % 8 === 0) {
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
@@ -402,7 +400,7 @@ class HeroType4 extends Hero {
   }
   heroMovement() {
     this.x = this.x + this.speed;
-    // Other movement logic as before
+
     if (gameSpeed % 5 === 0) {
       if (this.frameX < this.lastFrame) {
         this.frameX += 1;
@@ -604,7 +602,7 @@ const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
 const ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D;
 
 import { gameSpeed } from "./game";
-const audio = new Audio();
+export const audio = new Audio();
 audio.src = "./sound/resouce-increase.mp3";
 
 interface HeroCard {
@@ -627,7 +625,7 @@ interface HeroCard {
   imageY: number;
 }
 
-const cards: HeroCard[] = [];
+export const cards: HeroCard[] = [];
 export const heroes: Hero[] = [];
 let selectedCard: HeroCard | null = null;
 
@@ -733,9 +731,9 @@ export function chooseHero() {
       }
     }
     ctx1.fillStyle = "gold";
-    ctx1.font = "10px Arial";
-    ctx1.fillText(`${card.name}`, card.x + 11, card.y + 10);
-    ctx1.fillText(`Cost:${card.cost}`, card.x + 11, card.y + 20);
+    ctx1.font = "8px Audiowide";
+    ctx1.fillText(`${card.name}`, card.x + 5, card.y + 10);
+    ctx1.fillText(`Cost:${card.cost}`, card.x + 5, card.y + 20);
     ctx1.drawImage(
       card.image,
       card.eachWidth * card.frameX,
@@ -759,7 +757,7 @@ function isGridOccupied(x: number, y: number): boolean {
   return occupiedGridPositions.has(gridKey);
 }
 // Add event listener for canvas click
-// Add event listener for canvas click
+
 canvas1.addEventListener("click", (event) => {
   const rect = canvas1.getBoundingClientRect();
   let x = event.clientX - rect.left;
@@ -770,7 +768,7 @@ canvas1.addEventListener("click", (event) => {
   y = y - (y % 64);
 
   // Check if a card is selected or y is in the topmost row
-  if (!selectedCard || (selectedCard && y == 0)) {
+  if ((!selectedCard && y == 0) || (selectedCard && y == 0)) {
     // Check if a card was clicked
     cards.forEach((card) => {
       if (
@@ -785,48 +783,11 @@ canvas1.addEventListener("click", (event) => {
   } else {
     // Check if y is within the valid range (not in the first row)
     if (y >= 64 && y <= 564 && x >= 128) {
-      if (selectedCard.cost > resources) {
-        floatingmessage.push(
-          new FloatingMessage(
-            "Not Enough Resources",
-            canvas1.width / 2 - 200,
-            canvas1.height / 2 + 50,
-            50,
-            1,
-            "white"
-          )
-        );
-      } else {
-        // Special hero types that can be placed anywhere
-        if (
-          selectedCard.heroClass === HeroType3 ||
-          selectedCard.heroClass === HeroType4 ||
-          selectedCard.heroClass === HeroType5 ||
-          selectedCard.heroClass === HeroType6
-        ) {
-          const newHero = new selectedCard.heroClass(x, y);
-          heroes.push(newHero);
-          resources -= selectedCard.cost;
-        } else if (
-          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType1) ||
-          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType2) ||
-          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType7) ||
-          (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType8)
-        ) {
-          // Create a new hero using the heroClass from the selected card
-          const newHero = new selectedCard.heroClass(x, y);
-          heroes.push(newHero);
-
-          // Mark the grid position as occupied
-          const gridKey = `${x},${y}`;
-          occupiedGridPositions.add(gridKey);
-
-          // Deduct resources after successful placement
-          resources -= selectedCard.cost;
-        } else {
+      if (selectedCard) {
+        if (selectedCard.cost > resources) {
           floatingmessage.push(
             new FloatingMessage(
-              "Position Is Occupied",
+              "Not Enough Resources",
               canvas1.width / 2 - 200,
               canvas1.height / 2 + 50,
               50,
@@ -834,6 +795,45 @@ canvas1.addEventListener("click", (event) => {
               "white"
             )
           );
+        } else {
+          // Special hero types that can be placed anywhere
+          if (
+            selectedCard.heroClass === HeroType3 ||
+            selectedCard.heroClass === HeroType4 ||
+            selectedCard.heroClass === HeroType5 ||
+            selectedCard.heroClass === HeroType6
+          ) {
+            const newHero = new selectedCard.heroClass(x, y);
+            heroes.push(newHero);
+            resources -= selectedCard.cost;
+          } else if (
+            (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType1) ||
+            (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType2) ||
+            (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType7) ||
+            (!isGridOccupied(x, y) && selectedCard.heroClass == HeroType8)
+          ) {
+            // Create a new hero using the heroClass from the selected card
+            const newHero = new selectedCard.heroClass(x, y);
+            heroes.push(newHero);
+
+            // Mark the grid position as occupied
+            const gridKey = `${x},${y}`;
+            occupiedGridPositions.add(gridKey);
+
+            // Deduct resources after successful placement
+            resources -= selectedCard.cost;
+          } else {
+            floatingmessage.push(
+              new FloatingMessage(
+                "Position Is Occupied",
+                canvas1.width / 2 - 200,
+                canvas1.height / 2 + 50,
+                50,
+                1,
+                "white"
+              )
+            );
+          }
         }
       }
     } else {
@@ -869,7 +869,6 @@ export function drawDefenders() {
 
 // Schedule card addition
 setTimeout(() => {
-  audio.play();
   createHeroCard(
     "./images/card4.png",
     64 * 7,
@@ -886,78 +885,101 @@ setTimeout(() => {
   );
 }, 0);
 
-setTimeout(() => {
-  audio.play();
-  createHeroCard(
-    `./images/card5.png`,
-    64 * 8,
-    0,
-    0,
-    11,
-    96.4,
-    98,
-    HeroType5,
-    150,
-    "Viking Hero",
-    64 * 8,
-    0
-  );
-}, 0);
+let heroTimeouts: any[] = [];
 
-setTimeout(() => {
-  audio.play();
-  createHeroCard(
-    `./images/card6.png`,
-    64 * 9,
-    0,
-    0,
-    11,
-    128.2,
-    130,
-    HeroType6,
-    200,
-    "Fighter",
-    64 * 9,
-    0
-  );
-}, 0);
+export function setupHeroTimeouts() {
+  // Clear existing timeouts
+  heroTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+  heroTimeouts = [];
 
-setTimeout(() => {
-  audio.play();
-  createHeroCard(
-    `./images/card7.png`,
-    64 * 10,
-    0,
-    0,
-    6,
-    130,
-    130,
-    HeroType7,
-    200,
-    "Jinn",
-    64 * 10,
-    10
+  // Set up new timeouts for hero cards
+  heroTimeouts.push(
+    setTimeout(() => {
+      audio.volume = 0.8;
+      audio.play();
+      createHeroCard(
+        `./images/card5.png`,
+        64 * 8,
+        0,
+        0,
+        11,
+        96.4,
+        98,
+        HeroType5,
+        150,
+        "Viking Hero",
+        64 * 8,
+        0
+      );
+    }, 81000)
   );
-}, 0);
 
-setTimeout(() => {
-  audio.play();
-  createHeroCard(
-    `./images/card8.png`,
-    64 * 11,
-    0,
-    0,
-    14,
-    130,
-    130,
-    HeroType8,
-    200,
-    "Wizard Girl",
-    64 * 11,
-    10
+  heroTimeouts.push(
+    setTimeout(() => {
+      audio.volume = 0.8;
+
+      audio.play();
+      createHeroCard(
+        `./images/card6.png`,
+        64 * 9,
+        0,
+        0,
+        11,
+        128.2,
+        130,
+        HeroType6,
+        200,
+        "Fighter",
+        64 * 9,
+        0
+      );
+    }, 81000)
   );
-}, 0);
 
+  heroTimeouts.push(
+    setTimeout(() => {
+      audio.volume = 0.8;
+
+      audio.play();
+      createHeroCard(
+        `./images/card7.png`,
+        64 * 10,
+        0,
+        0,
+        6,
+        130,
+        130,
+        HeroType7,
+        200,
+        "Jinn",
+        64 * 10,
+        10
+      );
+    }, 160000)
+  );
+
+  heroTimeouts.push(
+    setTimeout(() => {
+      audio.volume = 0.8;
+
+      audio.play();
+      createHeroCard(
+        `./images/card8.png`,
+        64 * 11,
+        0,
+        0,
+        14,
+        130,
+        130,
+        HeroType8,
+        200,
+        "Wizard Girl",
+        64 * 11,
+        10
+      );
+    }, 160000)
+  );
+}
 export let resources = 400;
 export let drawHeroCardNow = false;
 
@@ -966,7 +988,9 @@ export function initializeResources() {
 }
 export function addResources(x: number) {
   resources += x;
-
+}
+export function removeresource(x: number) {
+  resources -= x;
 }
 
 let mouseX: number | null = null;
